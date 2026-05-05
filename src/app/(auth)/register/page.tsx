@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,18 +9,18 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import {
   ShoppingBag, Loader2, Check, ArrowRight, ArrowLeft,
-  User, CreditCard, Store, Zap, Star, Crown
+  User, CreditCard, Store, Zap, Star, Crown, Package,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { createClient } from '@/lib/supabase/client'
 import { PLANS } from '@/lib/plans-config'
 import { formatCurrency, getPlanDisplayName, generateUniqueSlug } from '@/lib/utils'
 
-// ─── Step schemas ─────────────────────────────────────────────────────────────
+// ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const accountSchema = z.object({
   full_name: z.string().min(2, 'Ingresa tu nombre completo'),
@@ -33,8 +33,22 @@ const storeSchema = z.object({
   whatsapp: z.string().regex(/^[0-9+\s()-]{10,20}$/, 'Número inválido').optional().or(z.literal('')),
 })
 
+const productSchema = z.object({
+  title: z.string().min(3, 'Mínimo 3 caracteres').max(120),
+  price: z.number({ message: 'Ingresa un precio válido' }).positive('El precio debe ser mayor a 0'),
+  category: z.string().min(1, 'Selecciona una categoría'),
+  condition: z.enum(['nuevo', 'como_nuevo', 'buen_estado', 'usado']),
+  description: z.string().max(1000).optional(),
+})
+
 type AccountData = z.infer<typeof accountSchema>
 type StoreData = z.infer<typeof storeSchema>
+type ProductData = z.infer<typeof productSchema>
+
+const CATEGORIES = [
+  'Electrónica', 'Ropa y calzado', 'Muebles', 'Hogar', 'Juguetes',
+  'Deportes', 'Vehículos', 'Libros', 'Arte', 'Joyería', 'Herramientas', 'Otros',
+]
 
 // ─── Plan options ─────────────────────────────────────────────────────────────
 
@@ -56,7 +70,7 @@ const PLAN_OPTIONS = [
     desc: '$99/mes',
     color: 'border-slate-200 hover:border-blue-400',
     selectedColor: 'border-blue-400 bg-blue-50',
-    features: ['10 productos', 'Sin límite por producto', 'Total inventario ≤ $1,000 MXN', '8% comisión'],
+    features: ['10 productos', 'Sin límite por producto', 'Total inventario ≤ $10,000 MXN', '8% comisión'],
     warning: null,
   },
   {
@@ -82,13 +96,14 @@ const PLAN_OPTIONS = [
   },
 ]
 
-// ─── Step indicators ──────────────────────────────────────────────────────────
+// ─── Step indicator ───────────────────────────────────────────────────────────
 
 function StepIndicator({ current }: { current: number }) {
   const steps = [
     { n: 1, label: 'Cuenta', icon: User },
     { n: 2, label: 'Plan', icon: CreditCard },
     { n: 3, label: 'Tienda', icon: Store },
+    { n: 4, label: 'Producto', icon: Package },
   ]
   return (
     <div className="flex items-center justify-center gap-0 mb-8">
@@ -111,7 +126,7 @@ function StepIndicator({ current }: { current: number }) {
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className={`mx-2 mb-4 h-0.5 w-12 ${done ? 'bg-green-500' : 'bg-slate-200'}`} />
+              <div className={`mx-1.5 mb-4 h-0.5 w-8 ${done ? 'bg-green-500' : 'bg-slate-200'}`} />
             )}
           </div>
         )
@@ -120,19 +135,58 @@ function StepIndicator({ current }: { current: number }) {
   )
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main flow ────────────────────────────────────────────────────────────────
 
 function RegisterFlow() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const initialStep = searchParams.get('step') === '3' ? 3 : 1
+
+  const stepParam = searchParams.get('step')
+  const initialStep = stepParam === '4' ? 4 : stepParam === '3' ? 3 : stepParam === '2' ? 2 : 1
 
   const [step, setStep] = useState(initialStep)
   const [loading, setLoading] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'basico' | 'pro' | 'premium'>('free')
+  const [accountCreated, setAccountCreated] = useState(initialStep > 1)
+  const [storeId, setStoreId] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+
+  // Check existing session on mount
+  useEffect(() => {
+    if (initialStep > 1) return // already mid-flow via URL param, trust the param
+
+    async function checkSession() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      setAccountCreated(true)
+      setUserId(user.id)
+
+      const { data: store } = await supabase
+        .from('stores')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .single()
+
+      if (store) {
+        // Already fully registered
+        router.replace('/dashboard')
+      } else {
+        // Account exists, skip to plan selection
+        setStep(2)
+      }
+    }
+    checkSession()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const accountForm = useForm<AccountData>({ resolver: zodResolver(accountSchema) })
   const storeForm = useForm<StoreData>({ resolver: zodResolver(storeSchema) })
+  const productForm = useForm<ProductData>({
+    resolver: zodResolver(productSchema),
+    defaultValues: { condition: 'buen_estado' },
+  })
 
   // ── Step 1: crear cuenta ──────────────────────────────────────────────────
   async function handleAccount(data: AccountData) {
@@ -151,6 +205,7 @@ function RegisterFlow() {
       return
     }
 
+    setAccountCreated(true)
     setStep(2)
     setLoading(false)
   }
@@ -194,7 +249,8 @@ function RegisterFlow() {
       return
     }
 
-    // Crear seller profile si no existe
+    setUserId(user.id)
+
     const { data: existingProfile } = await supabase
       .from('seller_profiles')
       .select('id')
@@ -213,19 +269,68 @@ function RegisterFlow() {
       sellerProfileId = newProfile?.id
     }
 
-    // Crear tienda
     const slug = generateUniqueSlug(data.store_name)
-    const { error } = await supabase.from('stores').insert({
+    const { data: newStore, error } = await supabase.from('stores').insert({
       user_id: user.id,
       seller_profile_id: sellerProfileId,
       name: data.store_name,
       slug,
       whatsapp: data.whatsapp || null,
       status: 'active',
-    })
+    }).select('id').single()
 
     if (error) {
       toast.error('Error al crear la tienda')
+      setLoading(false)
+      return
+    }
+
+    setStoreId(newStore?.id ?? null)
+    setStep(4)
+    setLoading(false)
+  }
+
+  // ── Step 4: agregar primer producto ──────────────────────────────────────
+  async function handleProduct(data: ProductData) {
+    if (!userId || !storeId) {
+      router.push('/dashboard')
+      return
+    }
+
+    setLoading(true)
+    const supabase = createClient()
+
+    // Check limits before inserting
+    const res = await fetch('/api/products/check-limits', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ price: data.price }),
+    })
+    const limits = await res.json()
+
+    if (!limits.canAddProduct) {
+      toast.error(limits.reason ?? 'No puedes agregar este producto con tu plan actual')
+      setLoading(false)
+      return
+    }
+
+    const slug = generateUniqueSlug(data.title)
+    const { error } = await supabase.from('products').insert({
+      store_id: storeId,
+      user_id: userId,
+      title: data.title,
+      slug,
+      description: data.description,
+      price: data.price,
+      category: data.category,
+      condition: data.condition,
+      images: [],
+      status: 'active',
+      is_featured: false,
+    })
+
+    if (error) {
+      toast.error('Error al crear el producto')
       setLoading(false)
       return
     }
@@ -257,7 +362,7 @@ function RegisterFlow() {
         {step === 1 && (
           <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
             <h1 className="mb-1 text-xl font-bold text-slate-900">Crea tu cuenta</h1>
-            <p className="mb-6 text-sm text-slate-500">Paso 1 de 3 — Solo toma 30 segundos</p>
+            <p className="mb-6 text-sm text-slate-500">Paso 1 de 4 — Solo toma 30 segundos</p>
 
             <form onSubmit={accountForm.handleSubmit(handleAccount)} className="space-y-4">
               <div className="space-y-2">
@@ -298,7 +403,7 @@ function RegisterFlow() {
         {step === 2 && (
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <h1 className="mb-1 text-xl font-bold text-slate-900">Elige tu plan</h1>
-            <p className="mb-5 text-sm text-slate-500">Paso 2 de 3 — Puedes cambiarlo cuando quieras</p>
+            <p className="mb-5 text-sm text-slate-500">Paso 2 de 4 — Puedes cambiarlo cuando quieras</p>
 
             <div className="grid grid-cols-2 gap-3">
               {PLAN_OPTIONS.map((opt) => {
@@ -358,14 +463,16 @@ function RegisterFlow() {
                   <>Pagar {formatCurrency(PLANS[selectedPlan].price)}/mes con Stripe <ArrowRight className="h-4 w-4" /></>
                 )}
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full gap-2 text-slate-500"
-                onClick={() => setStep(1)}
-                disabled={loading}
-              >
-                <ArrowLeft className="h-4 w-4" /> Volver
-              </Button>
+              {!accountCreated && (
+                <Button
+                  variant="ghost"
+                  className="w-full gap-2 text-slate-500"
+                  onClick={() => setStep(1)}
+                  disabled={loading}
+                >
+                  <ArrowLeft className="h-4 w-4" /> Volver
+                </Button>
+              )}
             </div>
           </div>
         )}
@@ -374,7 +481,7 @@ function RegisterFlow() {
         {step === 3 && (
           <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
             <h1 className="mb-1 text-xl font-bold text-slate-900">Crea tu tienda</h1>
-            <p className="mb-2 text-sm text-slate-500">Paso 3 de 3 — ¡Ya casi terminamos!</p>
+            <p className="mb-2 text-sm text-slate-500">Paso 3 de 4 — ¡Ya casi terminamos!</p>
 
             {paidPlanParam && (
               <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
@@ -396,9 +503,7 @@ function RegisterFlow() {
                 {storeForm.formState.errors.store_name && (
                   <p className="text-xs text-red-500">{storeForm.formState.errors.store_name.message}</p>
                 )}
-                <p className="text-xs text-slate-400">
-                  Este será el nombre visible en tu tienda pública
-                </p>
+                <p className="text-xs text-slate-400">Este será el nombre visible en tu tienda pública</p>
               </div>
 
               <div className="space-y-2">
@@ -409,9 +514,7 @@ function RegisterFlow() {
                   placeholder="+52 555 123 4567"
                   {...storeForm.register('whatsapp')}
                 />
-                <p className="text-xs text-slate-400">
-                  Los compradores te contactarán aquí
-                </p>
+                <p className="text-xs text-slate-400">Los compradores te contactarán aquí</p>
                 {storeForm.formState.errors.whatsapp && (
                   <p className="text-xs text-red-500">{storeForm.formState.errors.whatsapp.message}</p>
                 )}
@@ -419,8 +522,109 @@ function RegisterFlow() {
 
               <Button type="submit" className="w-full gap-2" disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Store className="h-4 w-4" />}
-                Crear mi tienda e ir al dashboard
+                Crear tienda y continuar
               </Button>
+            </form>
+          </div>
+        )}
+
+        {/* ─ STEP 4: Primer producto ─────────────────────────────────── */}
+        {step === 4 && (
+          <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h1 className="mb-1 text-xl font-bold text-slate-900">Agrega tu primer producto</h1>
+            <p className="mb-2 text-sm text-slate-500">Paso 4 de 4 — Puedes omitir este paso si quieres</p>
+
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
+              <Check className="h-4 w-4 text-green-600" />
+              <p className="text-sm text-green-700">¡Tienda creada exitosamente! Ahora publica tu primer remate.</p>
+            </div>
+
+            <form onSubmit={productForm.handleSubmit(handleProduct)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Nombre del producto *</Label>
+                <Input id="title" placeholder="Ej: iPhone 12 Pro 128GB" {...productForm.register('title')} />
+                {productForm.formState.errors.title && (
+                  <p className="text-xs text-red-500">{productForm.formState.errors.title.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Precio (MXN) *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    min={1}
+                    step={1}
+                    placeholder="0"
+                    {...productForm.register('price', { valueAsNumber: true })}
+                  />
+                  {productForm.formState.errors.price && (
+                    <p className="text-xs text-red-500">{productForm.formState.errors.price.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Categoría *</Label>
+                  <Select onValueChange={(v) => productForm.setValue('category', v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {productForm.formState.errors.category && (
+                    <p className="text-xs text-red-500">{productForm.formState.errors.category.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Condición *</Label>
+                <Select
+                  defaultValue="buen_estado"
+                  onValueChange={(v) => productForm.setValue('condition', v as ProductData['condition'])}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nuevo">Nuevo</SelectItem>
+                    <SelectItem value="como_nuevo">Como nuevo</SelectItem>
+                    <SelectItem value="buen_estado">Buen estado</SelectItem>
+                    <SelectItem value="usado">Usado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción (opcional)</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Estado, accesorios incluidos, detalles..."
+                  rows={3}
+                  {...productForm.register('description')}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Button type="submit" className="w-full gap-2" disabled={loading}>
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Package className="h-4 w-4" />}
+                  Publicar producto e ir al dashboard
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full text-slate-500"
+                  onClick={() => router.push('/dashboard')}
+                  disabled={loading}
+                >
+                  Omitir por ahora, ir al dashboard
+                </Button>
+              </div>
             </form>
           </div>
         )}

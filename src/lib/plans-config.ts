@@ -13,7 +13,7 @@ export const PLANS = {
     name: 'Básico',
     price: 99,
     productLimit: 10,
-    maxInventoryValue: 1000,
+    maxInventoryValue: 10000,
     maxProductPrice: null as number | null,
     commissionPercentage: 8,
     onlinePayments: false,

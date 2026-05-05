@@ -20,7 +20,7 @@ export const PLANS = {
     name: 'Básico',
     price: 99,
     productLimit: 10,
-    maxInventoryValue: 1000,
+    maxInventoryValue: 10000,
     maxProductPrice: null,      // sin límite por producto
     commissionPercentage: 8,
     stripePriceId: process.env.STRIPE_PRICE_BASICO,

@@ -31,7 +31,8 @@ export async function middleware(request: NextRequest) {
 
   const protectedPaths = ['/dashboard', '/admin']
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
-  const isAuthPage = pathname === '/login' || pathname === '/register'
+  // Allow authenticated users to stay on /register mid-wizard; the page handles its own redirect
+  const isAuthPage = pathname === '/login'
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()
