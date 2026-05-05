@@ -4,7 +4,7 @@ import { MessageCircle, MapPin, Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
-import { ProductCard } from '@/components/shared/product-card'
+import { StoreProductSearch } from '@/components/shared/store-product-search'
 import { Badge } from '@/components/ui/badge'
 import type { Product } from '@/types'
 
@@ -104,7 +104,7 @@ export default async function StorePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Products grid */}
+        {/* Products grid with search */}
         <div className="mx-auto max-w-7xl px-4 py-8">
           {!products?.length ? (
             <div className="py-20 text-center">
@@ -112,19 +112,12 @@ export default async function StorePage({ params }: Props) {
               <p className="mt-4 text-slate-500">Esta tienda aún no tiene productos publicados</p>
             </div>
           ) : (
-            <>
-              <h2 className="mb-6 text-xl font-semibold text-slate-900">
-                Remates disponibles
-              </h2>
-              <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={{ ...product, store: { slug: store.slug, whatsapp: store.whatsapp, name: store.name } }}
-                  />
-                ))}
-              </div>
-            </>
+            <StoreProductSearch
+              products={products.map((p) => ({
+                ...p,
+                store: { slug: store.slug, whatsapp: store.whatsapp, name: store.name },
+              }))}
+            />
           )}
         </div>
       </main>
