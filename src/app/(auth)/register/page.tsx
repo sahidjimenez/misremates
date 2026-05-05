@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
-import { PLANS } from '@/lib/stripe'
+import { PLANS } from '@/lib/plans-config'
 import { formatCurrency, getPlanDisplayName, generateUniqueSlug } from '@/lib/utils'
 
 // ─── Step schemas ─────────────────────────────────────────────────────────────
@@ -163,13 +163,10 @@ function RegisterFlow() {
     }
 
     setLoading(true)
-    const plan = PLANS[selectedPlan]
-
     const res = await fetch('/api/stripe/create-checkout-subscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        priceId: plan.stripePriceId,
         planKey: selectedPlan,
         successUrl: `${window.location.origin}/register?step=3&plan=${selectedPlan}`,
         cancelUrl: `${window.location.origin}/register?step=2`,

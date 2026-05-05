@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { stripe } from '@/lib/stripe'
+import { stripe, PLANS } from '@/lib/stripe'
+import type { PlanKey } from '@/lib/stripe'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -10,10 +11,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { priceId } = await request.json()
+  const body = await request.json()
+  const planKey: PlanKey = body.planKey
+  const successUrl: string | undefined = body.successUrl
+  const cancelUrl: string | undefined = body.cancelUrl
 
-  if (!priceId) {
-    return NextResponse.json({ error: 'Price ID required' }, { status: 400 })
+  const plan = PLANS[planKey]
+  if (!plan || !plan.stripePriceId) {
+    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
   }
 
   const { data: subscription } = await supabase
@@ -46,9 +51,9 @@ export async function POST(request: Request) {
     customer: customerId,
     mode: 'subscription',
     payment_method_types: ['card'],
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/dashboard/billing?success=true`,
-    cancel_url: `${appUrl}/dashboard/billing?canceled=true`,
+    line_items: [{ price: plan.stripePriceId, quantity: 1 }],
+    success_url: successUrl ?? `${appUrl}/dashboard/billing?success=true`,
+    cancel_url: cancelUrl ?? `${appUrl}/dashboard/billing?canceled=true`,
     metadata: { supabase_user_id: user.id },
     subscription_data: {
       metadata: { supabase_user_id: user.id },

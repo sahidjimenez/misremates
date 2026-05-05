@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { PLANS, type PlanKey } from '@/lib/stripe'
+import { PLANS, type PlanKey } from '@/lib/plans-config'
 import { getPlanDisplayName, formatCurrency } from '@/lib/utils'
 
 interface UpgradeModalProps {
@@ -36,13 +36,12 @@ export function UpgradeModal({ open, onClose, reason, upgradeRequired }: Upgrade
   const features = PLAN_FEATURES[planKey] ?? []
 
   async function handleUpgrade() {
-    if (!plan.stripePriceId) return
     setLoading(true)
 
     const res = await fetch('/api/stripe/create-checkout-subscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: plan.stripePriceId, planKey }),
+      body: JSON.stringify({ planKey }),
     })
 
     const data = await res.json()
