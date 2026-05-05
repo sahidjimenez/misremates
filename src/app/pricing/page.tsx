@@ -8,7 +8,18 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata = { title: 'Precios' }
 
-const plans = [
+type PlanFeature = { text: string; ok: boolean; note?: string }
+
+const plans: Array<{
+  key: string
+  name: string
+  price: number
+  desc: string
+  popular?: boolean
+  features: PlanFeature[]
+  cta: string
+  href: string
+}> = [
   {
     key: 'free',
     name: 'Gratis',

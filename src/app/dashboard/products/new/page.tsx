@@ -25,7 +25,7 @@ const CATEGORIES = [
 const schema = z.object({
   title: z.string().min(3, 'Mínimo 3 caracteres').max(120),
   description: z.string().max(1000).optional(),
-  price: z.coerce.number().positive('El precio debe ser mayor a 0'),
+  price: z.number({ message: 'El precio debe ser mayor a 0' }).positive('El precio debe ser mayor a 0'),
   category: z.string().min(1, 'Selecciona una categoría'),
   condition: z.enum(['nuevo', 'como_nuevo', 'buen_estado', 'usado']),
   status: z.enum(['draft', 'active']),
@@ -196,7 +196,7 @@ export default function NewProductPage() {
                   min={1}
                   step={1}
                   placeholder="0"
-                  {...register('price')}
+                  {...register('price', { valueAsNumber: true })}
                 />
                 {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
               </div>

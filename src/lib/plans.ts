@@ -14,7 +14,7 @@ export async function getUserPlan(userId: string): Promise<PlanKey> {
     .single()
 
   if (!data) return 'free'
-  const planName = (data.plans as { name: string } | null)?.name
+  const planName = (data.plans as unknown as { name: string } | null)?.name
   return (planName as PlanKey) ?? 'free'
 }
 
