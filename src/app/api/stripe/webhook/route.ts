@@ -44,13 +44,14 @@ export async function POST(request: Request) {
               .eq('stripe_price_id', priceId)
               .single()
 
+            const sub = subscription as unknown as { current_period_end: number; status: string }
             await supabase.from('subscriptions').upsert({
               user_id: userId,
               plan_id: plan?.id,
               stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,
-              status: subscription.status,
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              status: sub.status,
+              current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
             }, { onConflict: 'user_id' })
           }
         }
@@ -89,10 +90,11 @@ export async function POST(request: Request) {
 
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription
-        const userId = subscription.metadata?.supabase_user_id
+        const subData = subscription as unknown as { current_period_end: number; status: string; metadata: Record<string, string>; items: { data: Array<{ price: { id: string } }> }; id: string }
+        const userId = subData.metadata?.supabase_user_id
 
         if (userId) {
-          const priceId = subscription.items.data[0]?.price.id
+          const priceId = subData.items.data[0]?.price.id
           const { data: plan } = await supabase
             .from('plans')
             .select('id')
@@ -103,10 +105,10 @@ export async function POST(request: Request) {
             .from('subscriptions')
             .update({
               plan_id: plan?.id,
-              status: subscription.status,
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              status: subData.status,
+              current_period_end: new Date(subData.current_period_end * 1000).toISOString(),
             })
-            .eq('stripe_subscription_id', subscription.id)
+            .eq('stripe_subscription_id', subData.id)
         }
         break
       }
