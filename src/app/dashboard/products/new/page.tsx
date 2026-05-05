@@ -40,6 +40,7 @@ export default function NewProductPage() {
   const [previews, setPreviews] = useState<string[]>([])
   const [upgradeOpen, setUpgradeOpen] = useState(false)
   const [upgradeReason, setUpgradeReason] = useState('')
+  const [upgradeRequired, setUpgradeRequired] = useState<'basico' | 'pro' | 'premium' | null>(null)
   const [storeId, setStoreId] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
 
@@ -98,6 +99,7 @@ export default function NewProductPage() {
 
     if (!limitsResult.canAddProduct) {
       setUpgradeReason(limitsResult.reason)
+      setUpgradeRequired(limitsResult.upgradeRequired ?? null)
       setUpgradeOpen(true)
       setLoading(false)
       return
@@ -307,6 +309,7 @@ export default function NewProductPage() {
         open={upgradeOpen}
         onClose={() => setUpgradeOpen(false)}
         reason={upgradeReason}
+        upgradeRequired={upgradeRequired}
       />
     </div>
   )

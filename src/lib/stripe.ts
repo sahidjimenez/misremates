@@ -10,7 +10,8 @@ export const PLANS = {
     name: 'Gratis',
     price: 0,
     productLimit: 3,
-    maxInventoryValue: null,
+    maxInventoryValue: 1000,   // total activo ≤ $1,000 MXN
+    maxProductPrice: 100,       // precio por producto ≤ $100 MXN
     commissionPercentage: 0,
     stripePriceId: null,
     onlinePayments: false,
@@ -20,6 +21,7 @@ export const PLANS = {
     price: 99,
     productLimit: 10,
     maxInventoryValue: 1000,
+    maxProductPrice: null,      // sin límite por producto
     commissionPercentage: 8,
     stripePriceId: process.env.STRIPE_PRICE_BASICO,
     onlinePayments: false,
@@ -29,6 +31,7 @@ export const PLANS = {
     price: 299,
     productLimit: 30,
     maxInventoryValue: 30000,
+    maxProductPrice: null,
     commissionPercentage: 5,
     stripePriceId: process.env.STRIPE_PRICE_PRO,
     onlinePayments: true,
@@ -38,6 +41,7 @@ export const PLANS = {
     price: 699,
     productLimit: null,
     maxInventoryValue: null,
+    maxProductPrice: null,
     commissionPercentage: 2.5,
     stripePriceId: process.env.STRIPE_PRICE_PREMIUM,
     onlinePayments: true,

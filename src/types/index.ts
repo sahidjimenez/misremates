@@ -111,8 +111,10 @@ export interface Payment {
 export interface PlanLimits {
   canAddProduct: boolean
   reason: string | null
+  upgradeRequired: 'basico' | 'pro' | 'premium' | null
   currentProductCount: number
   productLimit: number | null
   currentInventoryValue: number
   maxInventoryValue: number | null
+  maxProductPrice: number | null
 }
