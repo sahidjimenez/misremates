@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const limits = await checkPlanLimits(user.id, parsed.data.price)
+  const limits = await checkPlanLimits(user.id)
   if (!limits.canAddProduct) {
     return NextResponse.json({ error: limits.reason, limitReached: true }, { status: 403 })
   }

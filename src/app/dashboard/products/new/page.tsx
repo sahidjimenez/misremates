@@ -40,7 +40,7 @@ export default function NewProductPage() {
   const [previews, setPreviews] = useState<string[]>([])
   const [upgradeOpen, setUpgradeOpen] = useState(false)
   const [upgradeReason, setUpgradeReason] = useState('')
-  const [upgradeRequired, setUpgradeRequired] = useState<'basico' | 'pro' | 'premium' | null>(null)
+  const [upgradeRequired, setUpgradeRequired] = useState<'basico' | 'intermedio' | 'pro' | 'corporativo' | null>(null)
   const [storeId, setStoreId] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
 

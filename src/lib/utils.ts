@@ -43,8 +43,9 @@ export function getPlanDisplayName(plan: string): string {
   const names: Record<string, string> = {
     free: 'Gratis',
     basico: 'Básico',
+    intermedio: 'Intermedio',
     pro: 'Pro',
-    premium: 'Premium',
+    corporativo: 'Corporativo',
   }
   return names[plan] ?? plan
 }

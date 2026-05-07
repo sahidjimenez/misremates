@@ -60,38 +60,48 @@ const PLAN_OPTIONS = [
     desc: 'Para empezar',
     color: 'border-slate-200 hover:border-slate-400',
     selectedColor: 'border-slate-400 bg-slate-50',
-    features: ['3 productos máx', 'Precio por producto ≤ $100 MXN', 'Total inventario ≤ $1,000 MXN', 'Ventas por WhatsApp'],
-    warning: 'Solo para productos de $100 o menos.',
+    features: ['3 productos máx', 'Tienda pública', 'Ventas por WhatsApp'],
+    warning: null,
   },
   {
     key: 'basico' as const,
     icon: Zap,
     label: 'Básico',
-    desc: '$99/mes',
+    desc: '$39.99/mes',
     color: 'border-slate-200 hover:border-blue-400',
     selectedColor: 'border-blue-400 bg-blue-50',
-    features: ['10 productos', 'Sin límite por producto', 'Total inventario ≤ $10,000 MXN', '8% comisión'],
+    features: ['10 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+    warning: null,
+  },
+  {
+    key: 'intermedio' as const,
+    icon: Star,
+    label: 'Intermedio',
+    desc: '$59.99/mes',
+    color: 'border-slate-200 hover:border-yellow-400',
+    selectedColor: 'border-yellow-400 bg-yellow-50',
+    features: ['20 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     warning: null,
   },
   {
     key: 'pro' as const,
     icon: Star,
     label: 'Pro',
-    desc: '$299/mes',
+    desc: '$99.99/mes',
     color: 'border-slate-200 hover:border-green-400',
     selectedColor: 'border-green-500 bg-green-50',
     popular: true,
-    features: ['30 productos', 'Total hasta $30,000 MXN', 'Pagos en línea', '5% comisión'],
+    features: ['50 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     warning: null,
   },
   {
-    key: 'premium' as const,
+    key: 'corporativo' as const,
     icon: Crown,
-    label: 'Premium',
-    desc: '$699/mes',
+    label: 'Corporativo',
+    desc: '$299/mes',
     color: 'border-slate-200 hover:border-purple-400',
     selectedColor: 'border-purple-400 bg-purple-50',
-    features: ['Ilimitados', 'Sin límite de valor', 'Pagos online', 'Destacados + Analytics', '2.5% comisión'],
+    features: ['Productos ilimitados', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     warning: null,
   },
 ]
@@ -146,7 +156,8 @@ function RegisterFlow() {
 
   const [step, setStep] = useState(initialStep)
   const [loading, setLoading] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'basico' | 'pro' | 'premium'>('free')
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'basico' | 'intermedio' | 'pro' | 'corporativo'>('free')
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [accountCreated, setAccountCreated] = useState(initialStep > 1)
   const [storeId, setStoreId] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
@@ -386,7 +397,27 @@ function RegisterFlow() {
                   <p className="text-xs text-red-500">{accountForm.formState.errors.password.message}</p>
                 )}
               </div>
-              <Button type="submit" className="w-full gap-2" disabled={loading}>
+              <div className="flex items-start gap-2 pt-1">
+                <input
+                  id="acceptTerms"
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-green-600"
+                />
+                <label htmlFor="acceptTerms" className="text-xs text-slate-500 leading-relaxed cursor-pointer">
+                  Acepto los{' '}
+                  <Link href="/terminos" target="_blank" className="text-green-600 underline hover:text-green-700">
+                    Términos y Condiciones
+                  </Link>{' '}
+                  y el{' '}
+                  <Link href="/privacidad" target="_blank" className="text-green-600 underline hover:text-green-700">
+                    Aviso de Privacidad
+                  </Link>{' '}
+                  de misremates.
+                </label>
+              </div>
+              <Button type="submit" className="w-full gap-2" disabled={loading || !acceptedTerms}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 Continuar <ArrowRight className="h-4 w-4" />
               </Button>

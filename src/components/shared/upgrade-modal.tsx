@@ -19,13 +19,14 @@ interface UpgradeModalProps {
   open: boolean
   onClose: () => void
   reason: string
-  upgradeRequired?: 'basico' | 'pro' | 'premium' | null
+  upgradeRequired?: 'basico' | 'intermedio' | 'pro' | 'corporativo' | null
 }
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  basico: ['10 productos', 'Valor total hasta $1,000 MXN', 'Sin límite por producto', 'Ventas por WhatsApp', '8% comisión'],
-  pro: ['30 productos', 'Valor total hasta $30,000 MXN', 'Pagos en línea', 'Ventas por WhatsApp', '5% comisión'],
-  premium: ['Productos ilimitados', 'Sin límite de valor', 'Pagos en línea', 'Productos destacados', 'Analytics', '2.5% comisión'],
+  basico: ['10 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
+  intermedio: ['20 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
+  pro: ['50 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
+  corporativo: ['Productos ilimitados', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
 }
 
 export function UpgradeModal({ open, onClose, reason, upgradeRequired }: UpgradeModalProps) {

@@ -30,23 +30,28 @@ export default async function BillingPage() {
     {
       key: 'free' as const,
       icon: null,
-      features: ['3 productos', 'Tienda pública', 'Ventas por WhatsApp', 'Soporte por email'],
+      features: ['3 productos', 'Tienda pública', 'Ventas por WhatsApp'],
     },
     {
       key: 'basico' as const,
       icon: Zap,
-      features: ['10 productos', 'Valor max $1,000 MXN', 'Comisión 8%', 'Tienda pública', 'WhatsApp'],
+      features: ['10 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+    },
+    {
+      key: 'intermedio' as const,
+      icon: Star,
+      features: ['20 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     },
     {
       key: 'pro' as const,
       icon: Star,
       popular: true,
-      features: ['30 productos', 'Valor max $30,000 MXN', 'Comisión 5%', 'Pagos en línea', 'Soporte prioritario'],
+      features: ['50 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     },
     {
-      key: 'premium' as const,
+      key: 'corporativo' as const,
       icon: Crown,
-      features: ['Productos ilimitados', 'Sin límite de valor', 'Comisión 2.5%', 'Pagos en línea', 'Productos destacados', 'Analytics'],
+      features: ['Productos ilimitados', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     },
   ]
 
@@ -72,7 +77,7 @@ export default async function BillingPage() {
         </Card>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {plans.map(({ key, icon: Icon, popular, features }) => {
           const plan = PLANS[key]
           const isCurrent = currentPlan === key

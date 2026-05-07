@@ -15,7 +15,7 @@ export default async function ConnectPage() {
   if (!user) redirect('/login')
 
   const planKey = await getUserPlan(user.id)
-  const hasOnlinePayments = planKey === 'pro' || planKey === 'premium'
+  const hasOnlinePayments = planKey !== 'free'
 
   const { data: sellerProfile } = await supabase
     .from('seller_profiles')
@@ -38,7 +38,7 @@ export default async function ConnectPage() {
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="p-6 text-center">
             <Zap className="mx-auto mb-3 h-10 w-10 text-amber-500" />
-            <h3 className="font-semibold text-slate-900">Disponible en planes Pro y Premium</h3>
+            <h3 className="font-semibold text-slate-900">Disponible en planes de pago</h3>
             <p className="mt-2 text-sm text-slate-600">
               Activa pagos en línea y acepta tarjetas directamente en tu tienda.
               Tus compradores pagan de forma segura y tú recibes el dinero en tu cuenta bancaria.

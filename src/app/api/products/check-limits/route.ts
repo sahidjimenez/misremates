@@ -10,10 +10,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json()
-  const price = Number(body.price) || 0
-
-  const limits = await checkPlanLimits(user.id, price)
+  const limits = await checkPlanLimits(user.id)
 
   return NextResponse.json(limits)
 }

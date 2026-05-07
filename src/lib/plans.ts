@@ -18,7 +18,7 @@ export async function getUserPlan(userId: string): Promise<PlanKey> {
   return (planName as PlanKey) ?? 'free'
 }
 
-export async function checkPlanLimits(userId: string, productPrice?: number): Promise<PlanLimits> {
+export async function checkPlanLimits(userId: string): Promise<PlanLimits> {
   const supabase = await createClient()
   const planKey = await getUserPlan(userId)
   const plan = PLANS[planKey]
@@ -30,61 +30,26 @@ export async function checkPlanLimits(userId: string, productPrice?: number): Pr
     .in('status', ['active', 'draft', 'paused'])
 
   const currentProductCount = count ?? 0
+  const productLimit = plan.productLimit ?? null
 
-  const { data: products } = await supabase
-    .from('products')
-    .select('price')
-    .eq('user_id', userId)
-    .in('status', ['active', 'paused'])
-
-  const currentInventoryValue = products?.reduce((sum, p) => sum + p.price, 0) ?? 0
-
-  const base = {
-    currentProductCount,
-    productLimit: plan.productLimit ?? null,
-    currentInventoryValue,
-    maxInventoryValue: plan.maxInventoryValue ?? null,
-    maxProductPrice: plan.maxProductPrice ?? null,
-  }
-
-  // 1. Límite por precio individual del producto
-  if (productPrice !== undefined && plan.maxProductPrice !== null && productPrice > plan.maxProductPrice) {
-    const upgradeTarget = productPrice > 30000 ? 'premium' : productPrice > 1000 ? 'pro' : 'basico'
+  if (productLimit !== null && currentProductCount >= productLimit) {
+    const upgradeTarget =
+      planKey === 'free' ? 'basico'
+      : planKey === 'basico' ? 'intermedio'
+      : planKey === 'intermedio' ? 'pro'
+      : 'corporativo'
     return {
-      ...base,
+      currentProductCount,
+      productLimit,
       canAddProduct: false,
       upgradeRequired: upgradeTarget,
-      reason: `Tu plan ${plan.name} solo permite productos de hasta $${plan.maxProductPrice.toLocaleString('es-MX')} MXN. Este producto vale $${productPrice.toLocaleString('es-MX')} MXN.`,
-    }
-  }
-
-  // 2. Límite de cantidad de productos
-  if (plan.productLimit !== null && currentProductCount >= plan.productLimit) {
-    const upgradeTarget = plan.productLimit >= 30 ? 'premium' : plan.productLimit >= 10 ? 'pro' : 'basico'
-    return {
-      ...base,
-      canAddProduct: false,
-      upgradeRequired: upgradeTarget,
-      reason: `Tu plan ${plan.name} permite máximo ${plan.productLimit} productos.`,
-    }
-  }
-
-  // 3. Límite de valor total del inventario
-  if (plan.maxInventoryValue !== null && productPrice !== undefined) {
-    const newTotal = currentInventoryValue + productPrice
-    if (newTotal > plan.maxInventoryValue) {
-      const upgradeTarget = newTotal > 30000 ? 'premium' : newTotal > 1000 ? 'pro' : 'basico'
-      return {
-        ...base,
-        canAddProduct: false,
-        upgradeRequired: upgradeTarget,
-        reason: `Agregar este producto llevaría tu inventario a $${newTotal.toLocaleString('es-MX')} MXN, superando el límite de $${plan.maxInventoryValue.toLocaleString('es-MX')} MXN de tu plan ${plan.name}.`,
-      }
+      reason: `Tu plan ${plan.name} permite máximo ${productLimit} productos.`,
     }
   }
 
   return {
-    ...base,
+    currentProductCount,
+    productLimit,
     canAddProduct: true,
     upgradeRequired: null,
     reason: null,
@@ -95,36 +60,20 @@ export async function checkPlanLimits(userId: string, productPrice?: number): Pr
 export function checkPlanLimitsSync(params: {
   planKey: PlanKey
   currentProductCount: number
-  currentInventoryValue: number
-  productPrice: number
 }): { canAddProduct: boolean; reason: string | null; upgradeRequired: string | null } {
-  const { planKey, currentProductCount, currentInventoryValue, productPrice } = params
+  const { planKey, currentProductCount } = params
   const plan = PLANS[planKey]
 
-  if (plan.maxProductPrice !== null && productPrice > plan.maxProductPrice) {
-    return {
-      canAddProduct: false,
-      upgradeRequired: 'basico',
-      reason: `Tu plan ${plan.name} solo permite productos de hasta $${plan.maxProductPrice.toLocaleString('es-MX')} MXN. Este producto vale $${productPrice.toLocaleString('es-MX')} MXN.`,
-    }
-  }
-
   if (plan.productLimit !== null && currentProductCount >= plan.productLimit) {
+    const upgradeRequired =
+      planKey === 'free' ? 'basico'
+      : planKey === 'basico' ? 'intermedio'
+      : planKey === 'intermedio' ? 'pro'
+      : 'corporativo'
     return {
       canAddProduct: false,
-      upgradeRequired: planKey === 'free' ? 'basico' : planKey === 'basico' ? 'pro' : 'premium',
+      upgradeRequired,
       reason: `Alcanzaste el límite de ${plan.productLimit} productos de tu plan ${plan.name}.`,
-    }
-  }
-
-  if (plan.maxInventoryValue !== null) {
-    const newTotal = currentInventoryValue + productPrice
-    if (newTotal > plan.maxInventoryValue) {
-      return {
-        canAddProduct: false,
-        upgradeRequired: planKey === 'free' || planKey === 'basico' ? 'pro' : 'premium',
-        reason: `Tu inventario llegaría a $${newTotal.toLocaleString('es-MX')} MXN, superando el límite de $${plan.maxInventoryValue.toLocaleString('es-MX')} MXN.`,
-      }
     }
   }
 

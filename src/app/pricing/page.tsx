@@ -30,9 +30,6 @@ const plans: Array<{
       { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
       { text: 'Pagos en línea', ok: false },
-      { text: 'Comisión', ok: false, note: 'N/A' },
-      { text: 'Productos destacados', ok: false },
-      { text: 'Analytics', ok: false },
     ],
     cta: 'Empezar gratis',
     href: '/register',
@@ -40,53 +37,58 @@ const plans: Array<{
   {
     key: 'basico',
     name: 'Básico',
-    price: 99,
-    desc: 'Para vendedores casuales',
+    price: 39.99,
+    desc: 'Para emprendedores',
     features: [
       { text: '10 productos', ok: true },
-      { text: 'Valor max $1,000 MXN', ok: true },
+      { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
-      { text: 'Pagos en línea', ok: false },
-      { text: '8% comisión', ok: true },
-      { text: 'Productos destacados', ok: false },
-      { text: 'Analytics', ok: false },
+      { text: 'Pagos en línea', ok: true },
     ],
     cta: 'Elegir Básico',
     href: '/register',
   },
   {
+    key: 'intermedio',
+    name: 'Intermedio',
+    price: 59.99,
+    desc: 'Para vendedores en crecimiento',
+    features: [
+      { text: '20 productos', ok: true },
+      { text: 'Tienda pública', ok: true },
+      { text: 'Ventas por WhatsApp', ok: true },
+      { text: 'Pagos en línea', ok: true },
+    ],
+    cta: 'Elegir Intermedio',
+    href: '/register',
+  },
+  {
     key: 'pro',
     name: 'Pro',
-    price: 299,
+    price: 99.99,
     popular: true,
     desc: 'Para vendedores activos',
     features: [
-      { text: '30 productos', ok: true },
-      { text: 'Valor max $30,000 MXN', ok: true },
+      { text: '50 productos', ok: true },
+      { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
       { text: 'Pagos en línea', ok: true },
-      { text: '5% comisión', ok: true },
-      { text: 'Productos destacados', ok: false },
-      { text: 'Analytics', ok: false },
     ],
     cta: 'Elegir Pro',
     href: '/register',
   },
   {
-    key: 'premium',
-    name: 'Premium',
-    price: 699,
+    key: 'corporativo',
+    name: 'Corporativo',
+    price: 299,
     desc: 'Para negocios de remates',
     features: [
       { text: 'Productos ilimitados', ok: true },
-      { text: 'Sin límite de valor', ok: true },
+      { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
       { text: 'Pagos en línea', ok: true },
-      { text: '2.5% comisión', ok: true },
-      { text: 'Productos destacados', ok: true },
-      { text: 'Analytics', ok: true },
     ],
-    cta: 'Elegir Premium',
+    cta: 'Elegir Corporativo',
     href: '/register',
   },
 ]
@@ -107,7 +109,7 @@ export default async function PricingPage() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
             {plans.map((plan) => (
               <div
                 key={plan.key}
@@ -167,11 +169,10 @@ export default async function PricingPage() {
           </div>
 
           <div className="mt-12 rounded-xl bg-slate-50 p-6 text-center">
-            <h3 className="font-semibold text-slate-900">¿Cómo funcionan las comisiones?</h3>
+            <h3 className="font-semibold text-slate-900">Planes flexibles para cada etapa</h3>
             <p className="mt-2 text-sm text-slate-600 max-w-2xl mx-auto">
-              La comisión se aplica solo cuando vendes usando los pagos en línea de la plataforma.
-              Si tu comprador paga por WhatsApp u otro medio, no se aplica comisión.
-              Ejemplo: Producto en $9,000 MXN con plan Pro (5%) → Recibes $8,550 MXN, la plataforma retiene $450 MXN.
+              Todos los planes de pago incluyen pagos en línea y tienda pública sin límites de precio por producto.
+              Actualiza o cancela en cualquier momento.
             </p>
           </div>
         </div>
