@@ -110,7 +110,9 @@ export function StoreContent({
         ) : (
           <StoreProductSearch
             products={products}
+            cartItems={items}
             onAddToCart={addItem}
+            onUpdateQuantity={updateQuantity}
           />
         )}
       </div>
