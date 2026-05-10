@@ -5,9 +5,11 @@ import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { Badge } from '@/components/ui/badge'
-import { ProductActions } from '@/components/store/product-actions'
+import { ProductPageClient } from '@/components/store/product-page-client'
 import { ProductImageCarousel } from '@/components/store/product-image-carousel'
 import { formatCurrency, formatDate, getConditionLabel } from '@/lib/utils'
+import { getUserPlan } from '@/lib/plans'
+import { PLANS } from '@/lib/stripe'
 
 interface Props {
   params: Promise<{ storeSlug: string; productSlug: string }>
@@ -32,7 +34,7 @@ export default async function ProductPage({ params }: Props) {
 
   const { data: product } = await supabase
     .from('products')
-    .select('*, stores!inner(slug, name, whatsapp, status)')
+    .select('*, stores!inner(id, slug, name, whatsapp, status, user_id, seller_profiles(stripe_account_id, stripe_onboarding_complete))')
     .eq('slug', productSlug)
     .eq('stores.slug', storeSlug)
     .eq('status', 'active')
@@ -40,7 +42,15 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) notFound()
 
-  const store = product.stores as { slug: string; name: string; whatsapp: string | null; status: string }
+  const store = product.stores as {
+    id: string
+    slug: string
+    name: string
+    whatsapp: string | null
+    status: string
+    user_id: string
+    seller_profiles: { stripe_account_id: string | null; stripe_onboarding_complete: boolean } | null
+  }
   const stock: number | null = product.stock ?? null
 
   const whatsappMsg = encodeURIComponent(
@@ -49,6 +59,13 @@ export default async function ProductPage({ params }: Props) {
   const whatsappUrl = store.whatsapp
     ? `https://wa.me/${store.whatsapp.replace(/\D/g, '')}?text=${whatsappMsg}`
     : null
+
+  let canPayOnline = false
+  const sp = store.seller_profiles
+  if (sp?.stripe_account_id && sp.stripe_onboarding_complete) {
+    const planKey = await getUserPlan(store.user_id)
+    canPayOnline = PLANS[planKey].onlinePayments
+  }
 
   return (
     <>
@@ -106,8 +123,10 @@ export default async function ProductPage({ params }: Props) {
               <p className="text-xs text-slate-400">Publicado el {formatDate(product.created_at)}</p>
             </div>
 
-            <ProductActions
+            <ProductPageClient
               storeSlug={storeSlug}
+              whatsapp={store.whatsapp}
+              canPayOnline={canPayOnline}
               productId={product.id}
               productSlug={product.slug}
               title={product.title}

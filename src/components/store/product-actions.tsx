@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { MessageCircle, ShoppingCart, Plus, Minus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { useCart } from '@/lib/cart'
+import type { CartItem } from '@/lib/cart'
 
 interface ProductActionsProps {
   storeSlug: string
@@ -15,6 +15,8 @@ interface ProductActionsProps {
   image: string | null
   stock: number | null
   whatsappUrl: string | null
+  cartItems: CartItem[]
+  onAddToCart: (item: Omit<CartItem, 'quantity'>) => void
 }
 
 export function ProductActions({
@@ -26,18 +28,19 @@ export function ProductActions({
   image,
   stock,
   whatsappUrl,
+  cartItems,
+  onAddToCart,
 }: ProductActionsProps) {
-  const { addItem, items } = useCart(storeSlug)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
 
   const outOfStock = stock !== null && stock <= 0
   const maxQty = stock ?? 99
-  const inCart = items.find((i) => i.productId === productId)
+  const inCart = cartItems.find((i) => i.productId === productId)
 
   function handleAdd() {
     for (let i = 0; i < qty; i++) {
-      addItem({ productId, productSlug, storeSlug, title, price, image, stock })
+      onAddToCart({ productId, productSlug, storeSlug, title, price, image, stock })
     }
     setAdded(true)
     toast.success(`${qty > 1 ? `${qty}x ` : ''}${title} agregado al carrito`)

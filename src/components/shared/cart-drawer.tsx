@@ -21,6 +21,9 @@ interface CartDrawerProps {
   onUpdateQuantity: (id: string, qty: number) => void
   onRemove: (id: string) => void
   onClear: () => void
+  /** When provided, the trigger button is hidden and open state is controlled externally */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function CartDrawer({
@@ -33,8 +36,13 @@ export function CartDrawer({
   onUpdateQuantity,
   onRemove,
   onClear,
+  open: controlledOpen,
+  onOpenChange,
 }: CartDrawerProps) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled ? (onOpenChange ?? (() => {})) : setInternalOpen
   const [buyerName, setBuyerName] = useState('')
   const [buyerEmail, setBuyerEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -70,7 +78,7 @@ export function CartDrawer({
   function handleWhatsApp() {
     if (!whatsapp) return
     const lines = items.map(
-      (i) => `• ${i.quantity}x ${i.title} — ${formatCurrency(i.price * i.quantity)}`
+      (i) => `• ${i.quantity} ${i.title} = ${formatCurrency(i.price * i.quantity)}`
     )
     const msg = `Hola, me gustaría comprar los siguientes productos de tu tienda:\n\n${lines.join('\n')}\n\nTotal: ${formatCurrency(total)}`
     window.open(
@@ -81,17 +89,19 @@ export function CartDrawer({
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
-      {/* Trigger — cart icon with badge */}
-      <DialogPrimitive.Trigger asChild>
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-green-400 hover:text-green-600 transition-colors">
-          <ShoppingCart className="h-4 w-4" />
-          {count > 0 && (
-            <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">
-              {count > 9 ? '9+' : count}
-            </span>
-          )}
-        </button>
-      </DialogPrimitive.Trigger>
+      {/* Trigger — cart icon with badge (hidden in controlled mode) */}
+      {!isControlled && (
+        <DialogPrimitive.Trigger asChild>
+          <button className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-green-400 hover:text-green-600 transition-colors">
+            <ShoppingCart className="h-4 w-4" />
+            {count > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">
+                {count > 9 ? '9+' : count}
+              </span>
+            )}
+          </button>
+        </DialogPrimitive.Trigger>
+      )}
 
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
