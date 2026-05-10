@@ -7,15 +7,14 @@ export async function getUserPlan(userId: string): Promise<PlanKey> {
 
   const { data } = await supabase
     .from('subscriptions')
-    .select('plans(name), status')
+    .select('plan_key, status')
     .eq('user_id', userId)
     .eq('status', 'active')
     .limit(1)
     .single()
 
-  if (!data) return 'free'
-  const planName = (data.plans as unknown as { name: string } | null)?.name
-  return (planName as PlanKey) ?? 'free'
+  if (!data?.plan_key) return 'free'
+  return data.plan_key as PlanKey
 }
 
 export async function checkPlanLimits(userId: string): Promise<PlanLimits> {
