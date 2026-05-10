@@ -11,7 +11,7 @@ export default async function LandingPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   const features = [
-    { icon: Store, title: 'Tu tienda propia', desc: 'Un enlace único para compartir todos tus productos en remate.' },
+    { icon: Store, title: 'Tu tienda online', desc: 'Un enlace único para compartir todos tus productos en remate.' },
     { icon: Package, title: 'Gestión de productos', desc: 'Sube fotos, precio, categoría y estado de cada artículo.' },
     { icon: MessageCircle, title: 'Ventas por WhatsApp', desc: 'Tus clientes te contactan directo por WhatsApp sin complicaciones.' },
     { icon: Share2, title: 'Comparte al instante', desc: 'Copia tu enlace y compártelo en grupos, redes sociales o WhatsApp.' },
