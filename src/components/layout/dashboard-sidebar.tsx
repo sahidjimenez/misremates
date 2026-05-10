@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -8,7 +9,6 @@ import {
   Package,
   CreditCard,
   Zap,
-  ShoppingBag,
   Shield,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -33,13 +33,8 @@ export function DashboardSidebar() {
     <aside className="hidden w-60 shrink-0 border-r border-slate-200 bg-white md:block">
       <div className="flex h-full flex-col py-4">
         <div className="px-4 pb-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-orange-500">
-              <ShoppingBag className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-bold text-slate-900">
-              mis<span className="text-orange-500">remates</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.png" alt="misremates" width={120} height={40} className="h-10 w-auto" priority />
           </Link>
         </div>
 
