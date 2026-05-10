@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Check, ShoppingBag, Store, Package, Share2, MessageCircle, Zap } from 'lucide-react'
+import { ArrowRight, Check, X, ShoppingBag, Store, Package, Share2, MessageCircle, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Navbar } from '@/components/layout/navbar'
@@ -100,38 +100,109 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing teaser */}
+        {/* Pricing */}
         <section className="py-20">
-          <div className="mx-auto max-w-2xl px-4 text-center">
-            <h2 className="text-3xl font-bold text-slate-900">Precios transparentes</h2>
-            <p className="mt-4 text-slate-500">Empieza gratis. Actualiza cuando necesites más alcance.</p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border-2 border-slate-200 p-6 text-left">
-                <p className="font-bold text-slate-900">Gratis</p>
-                <p className="mt-1 text-3xl font-extrabold text-slate-900">$0</p>
-                <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                  {['3 productos', 'Tienda pública', 'Ventas por WhatsApp'].map((item) => (
-                    <li key={item} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-green-600" />{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-xl border-2 border-green-500 bg-green-50 p-6 text-left">
-                <p className="font-bold text-green-700">Pro — Más popular</p>
-                <p className="mt-1 text-3xl font-extrabold text-slate-900">$299 <span className="text-base font-normal text-slate-500">/mes</span></p>
-                <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                  {['30 productos', 'Pagos en línea', '5% comisión', 'Valor hasta $30,000 MXN'].map((item) => (
-                    <li key={item} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-green-600" />{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-slate-900">Precios transparentes</h2>
+              <p className="mt-4 text-slate-500">Empieza gratis. Actualiza cuando tu negocio crezca.</p>
             </div>
-            <Link href="/pricing" className="mt-6 inline-block">
-              <Button variant="outline">Ver todos los planes</Button>
-            </Link>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                {
+                  name: 'Gratis', price: 0, desc: 'Para empezar sin compromiso', popular: false,
+                  features: [
+                    { text: '3 productos', ok: true },
+                    { text: 'Tienda pública', ok: true },
+                    { text: 'Ventas por WhatsApp', ok: true },
+                    { text: 'Pagos en línea', ok: false },
+                  ],
+                  cta: 'Empezar gratis',
+                },
+                {
+                  name: 'Básico', price: 39.99, desc: 'Para emprendedores', popular: false,
+                  features: [
+                    { text: '10 productos', ok: true },
+                    { text: 'Tienda pública', ok: true },
+                    { text: 'Ventas por WhatsApp', ok: true },
+                    { text: 'Pagos en línea', ok: true },
+                  ],
+                  cta: 'Elegir Básico',
+                },
+                {
+                  name: 'Intermedio', price: 59.99, desc: 'Para vendedores en crecimiento', popular: false,
+                  features: [
+                    { text: '20 productos', ok: true },
+                    { text: 'Tienda pública', ok: true },
+                    { text: 'Ventas por WhatsApp', ok: true },
+                    { text: 'Pagos en línea', ok: true },
+                  ],
+                  cta: 'Elegir Intermedio',
+                },
+                {
+                  name: 'Pro', price: 99.99, desc: 'Para vendedores activos', popular: true,
+                  features: [
+                    { text: '50 productos', ok: true },
+                    { text: 'Tienda pública', ok: true },
+                    { text: 'Ventas por WhatsApp', ok: true },
+                    { text: 'Pagos en línea', ok: true },
+                  ],
+                  cta: 'Elegir Pro',
+                },
+                {
+                  name: 'Corporativo', price: 299, desc: 'Para negocios de remates', popular: false,
+                  features: [
+                    { text: 'Productos ilimitados', ok: true },
+                    { text: 'Tienda pública', ok: true },
+                    { text: 'Ventas por WhatsApp', ok: true },
+                    { text: 'Pagos en línea', ok: true },
+                  ],
+                  cta: 'Elegir Corporativo',
+                },
+              ].map((plan) => (
+                <div
+                  key={plan.name}
+                  className={`relative flex flex-col rounded-2xl border-2 bg-white p-6 ${
+                    plan.popular ? 'border-green-500 shadow-lg shadow-green-100' : 'border-slate-200'
+                  }`}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                      <Badge variant="default" className="px-4">Más popular</Badge>
+                    </div>
+                  )}
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
+                    <p className="mt-1 text-xs text-slate-500">{plan.desc}</p>
+                    <div className="mt-3">
+                      {plan.price === 0 ? (
+                        <span className="text-3xl font-extrabold text-slate-900">Gratis</span>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-extrabold text-slate-900">${plan.price}</span>
+                          <span className="text-sm text-slate-400"> MXN/mes</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <ul className="mb-6 flex-1 space-y-2">
+                    {plan.features.map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm">
+                        {f.ok
+                          ? <Check className="h-4 w-4 shrink-0 text-green-600" />
+                          : <X className="h-4 w-4 shrink-0 text-slate-300" />}
+                        <span className={f.ok ? 'text-slate-700' : 'text-slate-400'}>{f.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link href="/register">
+                    <Button className="w-full" variant={plan.popular ? 'default' : 'outline'} size="sm">
+                      {plan.cta}
+                    </Button>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
