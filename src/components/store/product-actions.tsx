@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { MessageCircle, ShoppingCart, Plus, Minus, Check } from 'lucide-react'
+import Link from 'next/link'
+import { MessageCircle, ShoppingCart, Plus, Minus, Check, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import type { CartItem } from '@/lib/cart'
@@ -101,6 +102,13 @@ export function ProductActions({
           </Button>
         </a>
       )}
+
+      <Link href={`/s/${storeSlug}`}>
+        <Button variant="ghost" size="lg" className="w-full gap-2 text-slate-500">
+          <ArrowLeft className="h-4 w-4" />
+          Seguir comprando
+        </Button>
+      </Link>
 
       <p className="text-center text-xs text-slate-400">
         Este vendedor usa misremates.com.mx
