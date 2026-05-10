@@ -126,7 +126,9 @@ export async function POST(request: Request) {
       case 'account.updated': {
         const account = event.data.object as Stripe.Account
 
-        if (account.charges_enabled && account.payouts_enabled) {
+        // charges_enabled is sufficient to accept payments and receive transfers.
+        // payouts_enabled (bank account verification) can lag days in MX — don't block on it.
+        if (account.charges_enabled) {
           await supabase
             .from('seller_profiles')
             .update({ stripe_onboarding_complete: true })

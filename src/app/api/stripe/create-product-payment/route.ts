@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   const { data: product } = await supabase
     .from('products')
-    .select('*, stores(id, user_id, seller_profiles(stripe_account_id, stripe_onboarding_complete))')
+    .select('*, stores(id, slug, user_id, seller_profiles(stripe_account_id, stripe_onboarding_complete))')
     .eq('id', productId)
     .eq('status', 'active')
     .single()
