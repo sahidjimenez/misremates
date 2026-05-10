@@ -66,9 +66,15 @@ export async function POST(request: Request) {
         }
 
         if (session.mode === 'payment') {
-          const orderId = session.metadata?.order_id
-          if (orderId) {
-            const paymentIntentId = session.payment_intent as string
+          const paymentIntentId = session.payment_intent as string
+          // Support both single order_id and cart order_ids (comma-separated)
+          const orderIds = session.metadata?.order_ids
+            ? session.metadata.order_ids.split(',').filter(Boolean)
+            : session.metadata?.order_id
+            ? [session.metadata.order_id]
+            : []
+
+          for (const orderId of orderIds) {
             await supabase
               .from('orders')
               .update({ status: 'paid', stripe_payment_intent_id: paymentIntentId })

@@ -25,6 +25,7 @@ const schema = z.object({
   title: z.string().min(3, 'Mínimo 3 caracteres').max(120),
   description: z.string().max(1000).optional(),
   price: z.number({ message: 'El precio debe ser mayor a 0' }).positive('El precio debe ser mayor a 0'),
+  stock: z.number().int().min(1).optional().nullable(),
   category: z.string().min(1, 'Selecciona una categoría'),
   condition: z.enum(['nuevo', 'como_nuevo', 'buen_estado', 'usado']),
   status: z.enum(['draft', 'active', 'paused', 'sold']),
@@ -38,6 +39,7 @@ export interface ProductForEdit {
   title: string
   description?: string | null
   price: number
+  stock?: number | null
   category: string
   condition: string
   images: string[]
@@ -70,6 +72,7 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
       title: product.title,
       description: product.description ?? '',
       price: product.price,
+      stock: product.stock ?? undefined,
       category: product.category,
       condition: product.condition as FormData['condition'],
       status: product.status as FormData['status'],
@@ -192,7 +195,7 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
             <Textarea id="edit-description" rows={3} {...register('description')} />
           </div>
 
-          {/* Price + Category */}
+          {/* Price + Stock */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="edit-price">Precio (MXN) *</Label>
@@ -206,6 +209,22 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
               {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="edit-stock">Cantidad en stock</Label>
+              <Input
+                id="edit-stock"
+                type="number"
+                min={1}
+                step={1}
+                placeholder="Vacío = ilimitado"
+                {...register('stock', { valueAsNumber: true, setValueAs: (v) => v === '' || isNaN(v) ? null : Number(v) })}
+              />
+              <p className="text-xs text-slate-400">Vacío = sin límite de stock</p>
+            </div>
+          </div>
+
+          {/* Category */}
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Categoría *</Label>
               <Select

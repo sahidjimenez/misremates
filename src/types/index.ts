@@ -49,6 +49,7 @@ export interface Product {
   slug: string
   description: string | null
   price: number
+  stock: number | null
   category: string
   condition: 'nuevo' | 'como_nuevo' | 'buen_estado' | 'usado'
   images: string[]

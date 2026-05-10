@@ -26,6 +26,7 @@ const schema = z.object({
   title: z.string().min(3, 'Mínimo 3 caracteres').max(120),
   description: z.string().max(1000).optional(),
   price: z.number({ message: 'El precio debe ser mayor a 0' }).positive('El precio debe ser mayor a 0'),
+  stock: z.number().int().min(1).optional().nullable(),
   category: z.string().min(1, 'Selecciona una categoría'),
   condition: z.enum(['nuevo', 'como_nuevo', 'buen_estado', 'usado']),
   status: z.enum(['draft', 'active']),
@@ -135,6 +136,7 @@ export default function NewProductPage() {
       slug,
       description: data.description,
       price: data.price,
+      stock: data.stock ?? null,
       category: data.category,
       condition: data.condition,
       images: imageUrls,
@@ -203,6 +205,21 @@ export default function NewProductPage() {
                 {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="stock">Cantidad en stock</Label>
+                <Input
+                  id="stock"
+                  type="number"
+                  min={1}
+                  step={1}
+                  placeholder="Dejar vacío = ilimitado"
+                  {...register('stock', { valueAsNumber: true, setValueAs: (v) => v === '' || isNaN(v) ? null : Number(v) })}
+                />
+                <p className="text-xs text-slate-400">Dejar vacío si tienes stock ilimitado</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Categoría *</Label>
                 <Select onValueChange={(v) => setValue('category', v)}>

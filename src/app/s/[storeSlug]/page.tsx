@@ -1,12 +1,10 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { MessageCircle, MapPin, Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
-import { StoreProductSearch } from '@/components/shared/store-product-search'
-import { Badge } from '@/components/ui/badge'
-import type { Product } from '@/types'
+import { StoreContent } from '@/components/store/store-content'
+import { getUserPlan } from '@/lib/plans'
+import { PLANS } from '@/lib/stripe'
 
 interface Props {
   params: Promise<{ storeSlug: string }>
@@ -35,7 +33,7 @@ export default async function StorePage({ params }: Props) {
 
   const { data: store } = await supabase
     .from('stores')
-    .select('*, seller_profiles(display_name, city, state)')
+    .select('*, seller_profiles(display_name, city, state, stripe_account_id, stripe_onboarding_complete)')
     .eq('slug', storeSlug)
     .eq('status', 'active')
     .single()
@@ -50,76 +48,40 @@ export default async function StorePage({ params }: Props) {
     .order('is_featured', { ascending: false })
     .order('created_at', { ascending: false })
 
-  const seller = store.seller_profiles as { display_name: string; city?: string; state?: string } | null
+  const seller = store.seller_profiles as {
+    display_name: string
+    city?: string
+    state?: string
+    stripe_account_id?: string | null
+    stripe_onboarding_complete?: boolean
+  } | null
 
-  const whatsappUrl = store.whatsapp
-    ? `https://wa.me/${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola, vi tu tienda en misremates.com.mx y me gustaría más información.`)}`
-    : null
+  // Check if seller can accept online payments
+  let canPayOnline = false
+  if (seller?.stripe_account_id && seller.stripe_onboarding_complete) {
+    const planKey = await getUserPlan(store.user_id)
+    canPayOnline = PLANS[planKey].onlinePayments
+  }
+
+  const storeProducts = (products ?? []).map((p) => ({
+    ...p,
+    stock: p.stock ?? null,
+    store: { slug: store.slug, whatsapp: store.whatsapp, name: store.name },
+  }))
 
   return (
     <>
       <Navbar />
       <main>
-        {/* Store header */}
-        <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-2xl font-bold text-white shadow-md">
-                  {store.name[0].toUpperCase()}
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-slate-900">{store.name}</h1>
-                  {seller && (
-                    <div className="mt-1 flex items-center gap-2 text-sm text-slate-500">
-                      {(seller.city || seller.state) && (
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {[seller.city, seller.state].filter(Boolean).join(', ')}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  {store.description && (
-                    <p className="mt-2 text-sm text-slate-600 max-w-lg">{store.description}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="gap-1">
-                  <Package className="h-3 w-3" />
-                  {products?.length ?? 0} productos
-                </Badge>
-                {whatsappUrl && (
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                    <button className="flex items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-sm font-medium text-white hover:bg-[#20BA5A]">
-                      <MessageCircle className="h-4 w-4" />
-                      WhatsApp
-                    </button>
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Products grid with search */}
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          {!products?.length ? (
-            <div className="py-20 text-center">
-              <Package className="mx-auto h-12 w-12 text-slate-300" />
-              <p className="mt-4 text-slate-500">Esta tienda aún no tiene productos publicados</p>
-            </div>
-          ) : (
-            <StoreProductSearch
-              products={products.map((p) => ({
-                ...p,
-                store: { slug: store.slug, whatsapp: store.whatsapp, name: store.name },
-              }))}
-            />
-          )}
-        </div>
+        <StoreContent
+          storeSlug={storeSlug}
+          storeName={store.name}
+          storeDescription={store.description}
+          whatsapp={store.whatsapp}
+          seller={seller}
+          canPayOnline={canPayOnline}
+          products={storeProducts}
+        />
       </main>
       <Footer />
     </>

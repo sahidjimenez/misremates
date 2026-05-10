@@ -7,6 +7,7 @@ const schema = z.object({
   title: z.string().min(3).max(120).optional(),
   description: z.string().max(1000).optional(),
   price: z.number().positive().optional(),
+  stock: z.number().int().min(1).nullable().optional(),
   category: z.string().min(1).optional(),
   condition: z.enum(['nuevo', 'como_nuevo', 'buen_estado', 'usado']).optional(),
   images: z.array(z.string()).max(4).optional(),

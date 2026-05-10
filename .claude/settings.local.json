@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(vercel --version)",
+      "PowerShell(vercel *)",
+      "PowerShell(cmd /c \"vercel --version\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel env ls 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel env rm STRIPE_PRICE_PREMIUM production --yes 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel env rm STRIPE_PRICE_BASICO production --yes 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel env rm STRIPE_PRICE_PRO production --yes 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrJoBuM0U3VPuFZmC6Vdnz | vercel env add STRIPE_PRICE_BASICO production preview development 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrJoBuM0U3VPuFZmC6Vdnz | vercel env add STRIPE_PRICE_BASICO production 2>&1\" ; cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrJoBuM0U3VPuFZmC6Vdnz | vercel env add STRIPE_PRICE_BASICO preview 2>&1\" ; cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrJoBuM0U3VPuFZmC6Vdnz | vercel env add STRIPE_PRICE_BASICO development 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel env add STRIPE_PRICE_BASICO preview --value price_1TUrJoBuM0U3VPuFZmC6Vdnz --yes 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel env add STRIPE_PRICE_BASICO preview master --value price_1TUrJoBuM0U3VPuFZmC6Vdnz --yes 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrL0BuM0U3VPuFIwweUfsF | vercel env add STRIPE_PRICE_INTERMEDIO production 2>&1\" ; cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrL0BuM0U3VPuFIwweUfsF | vercel env add STRIPE_PRICE_INTERMEDIO development 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrL8BuM0U3VPuFllQIk4vs | vercel env add STRIPE_PRICE_PRO production 2>&1\" ; cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrL8BuM0U3VPuFllQIk4vs | vercel env add STRIPE_PRICE_PRO development 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrLKBuM0U3VPuFL4uQRWGF | vercel env add STRIPE_PRICE_CORPORATIVO production 2>&1\" ; cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && echo price_1TUrLKBuM0U3VPuFL4uQRWGF | vercel env add STRIPE_PRICE_CORPORATIVO development 2>&1\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && git status --porcelain\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && git diff src/app/api/stripe/create-checkout-subscription/route.ts\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && git log --oneline -3\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && git add src/app/api/stripe/create-checkout-subscription/route.ts && git commit -m \"\"fix: add error handling and strip trailing slash in checkout subscription route\"\"\")",
+      "PowerShell(cmd /c \"cd S:\\\\dev-agency\\\\projects\\\\misremates && vercel --prod 2>&1\")",
+      "Bash(Copy-Item *)",
+      "PowerShell(Copy-Item *)",
+      "PowerShell(node -e \"const sharp = require\\('S:/dev-agency/projects/misremates/node_modules/sharp'\\); sharp\\('c:/Users/Sahid Jimenez/Downloads/logomisRemates-removebg-preview.png'\\).resize\\(192,192,{fit:'contain',background:{r:255,g:255,b:255,alpha:0}}\\).toFile\\('S:/dev-agency/projects/misremates/public/icon-192.png', \\(e,i\\)=>console.log\\(e||i\\)\\); sharp\\('c:/Users/Sahid Jimenez/Downloads/logomisRemates-removebg-preview.png'\\).resize\\(512,512,{fit:'contain',background:{r:255,g:255,b:255,alpha:0}}\\).toFile\\('S:/dev-agency/projects/misremates/public/icon-512.png', \\(e,i\\)=>console.log\\(e||i\\)\\);\")",
+      "Bash(Get-ChildItem -Path \"S:\\\\dev-agency\\\\projects\\\\misremates\" -Directory)",
+      "Bash(Select-Object -First 20)",
+      "Bash(stripe --version)",
+      "Bash(stripe subscriptions *)",
+      "Bash(node -e ' *)",
+      "Bash(curl *)",
+      "Bash(python -m json.tool)",
+      "PowerShell(head *)",
+      "Bash(node *)",
+      "Bash(npx shadcn@latest add sheet --yes)",
+      "Bash(git commit *)"
+    ]
+  }
+}

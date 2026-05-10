@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Package } from 'lucide-react'
+import type { CartItem } from '@/lib/cart'
+
 interface StoreProduct {
   id: string
   title: string
@@ -18,14 +20,16 @@ interface StoreProduct {
   status: string
   slug: string
   is_featured: boolean
+  stock: number | null
   store: { slug: string; whatsapp: string | null; name: string }
 }
 
 interface Props {
   products: StoreProduct[]
+  onAddToCart?: (item: Omit<CartItem, 'quantity'>) => void
 }
 
-export function StoreProductSearch({ products }: Props) {
+export function StoreProductSearch({ products, onAddToCart }: Props) {
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
@@ -137,7 +141,7 @@ export function StoreProductSearch({ products }: Props) {
         <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filtered.map((product) => (
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <ProductCard key={product.id} product={product as any} />
+            <ProductCard key={product.id} product={product as any} onAddToCart={onAddToCart} />
           ))}
         </div>
       )}

@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MessageCircle, ChevronLeft, MapPin, Tag, Package } from 'lucide-react'
+import { ChevronLeft, Tag, Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { ProductActions } from '@/components/store/product-actions'
 import { formatCurrency, formatDate, getConditionLabel } from '@/lib/utils'
 
 interface Props {
@@ -40,6 +40,7 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound()
 
   const store = product.stores as { slug: string; name: string; whatsapp: string | null; status: string }
+  const stock: number | null = product.stock ?? null
 
   const whatsappMsg = encodeURIComponent(
     `Hola, me interesa el producto: *${product.title}* por ${formatCurrency(product.price)}. Vi tu tienda en misremates.com.mx`
@@ -124,22 +125,16 @@ export default async function ProductPage({ params }: Props) {
               <p className="text-xs text-slate-400">Publicado el {formatDate(product.created_at)}</p>
             </div>
 
-            {whatsappUrl ? (
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="w-full gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white">
-                  <MessageCircle className="h-5 w-5" />
-                  Contactar por WhatsApp
-                </Button>
-              </a>
-            ) : (
-              <Button size="lg" className="w-full" disabled>
-                Vendedor sin WhatsApp configurado
-              </Button>
-            )}
-
-            <p className="text-center text-xs text-slate-400">
-              Este vendedor usa misremates.com.mx
-            </p>
+            <ProductActions
+              storeSlug={storeSlug}
+              productId={product.id}
+              productSlug={product.slug}
+              title={product.title}
+              price={product.price}
+              image={product.images?.[0] ?? null}
+              stock={stock}
+              whatsappUrl={whatsappUrl}
+            />
           </div>
         </div>
       </main>

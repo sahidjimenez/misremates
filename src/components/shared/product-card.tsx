@@ -1,20 +1,24 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MessageCircle, Tag } from 'lucide-react'
+import { MessageCircle, Tag, ShoppingCart } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, getConditionLabel } from '@/lib/utils'
 import type { Product } from '@/types'
+import type { CartItem } from '@/lib/cart'
 
 interface ProductCardProps {
-  product: Product & { store?: { slug: string; whatsapp?: string | null; name: string } }
+  product: Product & { store?: { slug: string; whatsapp?: string | null; name: string }; stock?: number | null }
   showStoreLink?: boolean
+  onAddToCart?: (item: Omit<CartItem, 'quantity'>) => void
 }
 
-export function ProductCard({ product, showStoreLink = false }: ProductCardProps) {
+export function ProductCard({ product, showStoreLink = false, onAddToCart }: ProductCardProps) {
   const storeSlug = product.store?.slug
   const productUrl = storeSlug ? `/s/${storeSlug}/p/${product.slug}` : '#'
   const whatsapp = product.store?.whatsapp
+  const stock = product.stock ?? null
+  const outOfStock = stock !== null && stock <= 0
 
   const whatsappUrl = whatsapp
     ? `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola, me interesa el producto: ${product.title} - ${formatCurrency(product.price)}`)}`
@@ -25,6 +29,11 @@ export function ProductCard({ product, showStoreLink = false }: ProductCardProps
       {product.is_featured && (
         <div className="absolute left-2 top-2 z-10">
           <Badge variant="accent">⭐ Destacado</Badge>
+        </div>
+      )}
+      {outOfStock && (
+        <div className="absolute right-2 top-2 z-10">
+          <Badge variant="secondary" className="bg-slate-700 text-white">Sin stock</Badge>
         </div>
       )}
 
@@ -68,15 +77,40 @@ export function ProductCard({ product, showStoreLink = false }: ProductCardProps
         </div>
 
         <div className="mt-auto pt-3">
-          <p className="text-lg font-bold text-orange-600">{formatCurrency(product.price)}</p>
+          <div className="flex items-baseline justify-between">
+            <p className="text-lg font-bold text-orange-600">{formatCurrency(product.price)}</p>
+            {stock !== null && stock > 0 && (
+              <span className="text-xs text-slate-400">{stock} disp.</span>
+            )}
+          </div>
 
-          {whatsappUrl && product.status === 'active' && (
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block">
-              <Button size="sm" className="w-full gap-2 bg-[#25D366] hover:bg-[#20BA5A]">
-                <MessageCircle className="h-4 w-4" />
-                Contactar por WhatsApp
-              </Button>
-            </a>
+          {onAddToCart ? (
+            <Button
+              size="sm"
+              className="mt-2 w-full gap-2"
+              disabled={outOfStock}
+              onClick={() => onAddToCart({
+                productId: product.id,
+                productSlug: product.slug,
+                storeSlug: storeSlug ?? '',
+                title: product.title,
+                price: product.price,
+                image: product.images?.[0] ?? null,
+                stock,
+              })}
+            >
+              <ShoppingCart className="h-3.5 w-3.5" />
+              {outOfStock ? 'Sin stock' : 'Agregar al carrito'}
+            </Button>
+          ) : (
+            whatsappUrl && product.status === 'active' && (
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block">
+                <Button size="sm" className="w-full gap-2 bg-[#25D366] hover:bg-[#20BA5A]">
+                  <MessageCircle className="h-4 w-4" />
+                  Contactar por WhatsApp
+                </Button>
+              </a>
+            )
           )}
         </div>
       </div>
