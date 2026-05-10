@@ -23,7 +23,7 @@ export function Footer() {
           <div>
             <h4 className="mb-3 text-sm font-semibold text-slate-900">Plataforma</h4>
             <ul className="space-y-2 text-sm text-slate-500">
-              <li><Link href="/pricing" className="hover:text-slate-900">Precios</Link></li>
+              <li><Link href="/pricing" className="hover:text-slate-900">Planes</Link></li>
               <li><Link href="/register" className="hover:text-slate-900">Crear tienda</Link></li>
               <li><Link href="/login" className="hover:text-slate-900">Iniciar sesión</Link></li>
             </ul>
@@ -32,7 +32,7 @@ export function Footer() {
           <div>
             <h4 className="mb-3 text-sm font-semibold text-slate-900">Legal</h4>
             <ul className="space-y-2 text-sm text-slate-500">
-              <li><Link href="/terminos" className="hover:text-slate-900">Términos de uso</Link></li>
+              <li><Link href="/terminos" className="hover:text-slate-900">Términos y Condiciones</Link></li>
               <li><Link href="/privacidad" className="hover:text-slate-900">Privacidad</Link></li>
             </ul>
           </div>

@@ -7,8 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
-  ShoppingBag, Loader2, Check, ArrowRight, ArrowLeft,
+  Loader2, Check, ArrowRight, ArrowLeft,
   User, CreditCard, Store, Zap, Star, Crown, Package,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -357,13 +358,8 @@ function RegisterFlow() {
       <div className="w-full max-w-lg">
         {/* Logo */}
         <div className="mb-6 text-center">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500">
-              <ShoppingBag className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-slate-900">
-              mis<span className="text-orange-500">remates</span>
-            </span>
+          <Link href="/" className="inline-flex items-center">
+            <Image src="/logo.png" alt="misremates" width={140} height={48} className="h-14 w-auto" priority />
           </Link>
         </div>
 
@@ -644,7 +640,7 @@ function RegisterFlow() {
               <div className="space-y-2">
                 <Button type="submit" className="w-full gap-2" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Package className="h-4 w-4" />}
-                  Publicar producto e ir al dashboard
+                  Publicar producto e ir al panel
                 </Button>
                 <Button
                   type="button"
@@ -653,7 +649,7 @@ function RegisterFlow() {
                   onClick={() => router.push('/dashboard')}
                   disabled={loading}
                 >
-                  Omitir por ahora, ir al dashboard
+                  Omitir por ahora, ir al panel
                 </Button>
               </div>
             </form>
@@ -662,7 +658,7 @@ function RegisterFlow() {
 
         <p className="mt-4 text-center text-xs text-slate-400">
           Al registrarte aceptas nuestros{' '}
-          <Link href="/terminos" className="underline">Términos de uso</Link>
+          <Link href="/terminos" className="underline">Términos y Condiciones</Link>
         </p>
       </div>
     </div>

@@ -36,8 +36,8 @@ export default async function LandingPage() {
               🔥 La plataforma de remates #1 en México
             </Badge>
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
-              Vende tus remates con{' '}
-              <span className="text-orange-500">tu propia tienda</span>
+              Vende tus productos en remate con{' '}
+              <span className="text-orange-500">tu propia tienda online</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600">
               Crea tu tienda online de remates en minutos. Publica productos, comparte tu enlace

@@ -7,7 +7,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { ShoppingBag, Loader2 } from 'lucide-react'
+import Image from 'next/image'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -55,13 +56,8 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500">
-              <ShoppingBag className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-slate-900">
-              mis<span className="text-orange-500">remates</span>
-            </span>
+          <Link href="/" className="inline-flex items-center">
+            <Image src="/logo.png" alt="misremates" width={140} height={48} className="h-14 w-auto" priority />
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-slate-900">Bienvenido de vuelta</h1>
           <p className="mt-2 text-sm text-slate-500">Ingresa a tu cuenta para gestionar tu tienda</p>

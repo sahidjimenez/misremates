@@ -8,7 +8,7 @@ export const metadata = {
   description: 'Aviso de privacidad de misremates.com.mx conforme a la LFPDPPP.',
 }
 
-const LAST_UPDATED = '7 de mayo de 2026'
+const LAST_UPDATED = '10 de mayo de 2026'
 
 export default async function PrivacidadPage() {
   const supabase = await createClient()
@@ -29,8 +29,8 @@ export default async function PrivacidadPage() {
             <section>
               <h2 className="text-lg font-bold text-slate-900">1. Responsable del tratamiento</h2>
               <p>
-                <strong>misremates.com.mx</strong> ("misremates", "nosotros") es responsable del
-                tratamiento de tus datos personales, conforme a la{' '}
+                <strong>misremates.com.mx</strong>, es responsable del tratamiento de tus datos
+                personales, conforme a la{' '}
                 <strong>
                   Ley Federal de Protección de Datos Personales en Posesión de Particulares (LFPDPPP)
                 </strong>{' '}
@@ -46,12 +46,12 @@ export default async function PrivacidadPage() {
 
             <section>
               <h2 className="text-lg font-bold text-slate-900">2. Datos personales que recabamos</h2>
-              <p>Recabamos los siguientes datos personales:</p>
+              <p>Son los siguientes:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li><strong>Datos de identificación:</strong> nombre completo, dirección de correo electrónico.</li>
                 <li><strong>Datos de contacto:</strong> número de teléfono / WhatsApp (opcional).</li>
                 <li><strong>Datos de perfil de tienda:</strong> nombre de tienda, descripción, ciudad, estado.</li>
-                <li><strong>Datos de pago:</strong> procesados directamente por Stripe. misremates no almacena datos de tarjetas bancarias.</li>
+                <li><strong>Datos de pago:</strong> procesados directamente por Stripe. Misremates.com.mx, no almacena datos de tarjetas bancarias.</li>
                 <li><strong>Datos de uso:</strong> dirección IP, tipo de navegador, páginas visitadas, fecha y hora de acceso (datos de carácter técnico).</li>
               </ul>
               <p>
@@ -62,7 +62,7 @@ export default async function PrivacidadPage() {
 
             <section>
               <h2 className="text-lg font-bold text-slate-900">3. Finalidades del tratamiento</h2>
-              <p><strong>Finalidades primarias (necesarias para la relación contractual):</strong></p>
+              <p><strong>Finalidades primarias (necesarias para la relación comercial):</strong></p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>Crear y gestionar tu cuenta de usuario.</li>
                 <li>Operar tu tienda en línea dentro de la Plataforma.</li>
@@ -73,7 +73,7 @@ export default async function PrivacidadPage() {
               </ul>
               <p className="mt-3"><strong>Finalidades secundarias (puedes oponerte):</strong></p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Enviarte comunicaciones de marketing sobre nuevas funcionalidades, ofertas y actualizaciones de la Plataforma.</li>
+                <li>Enviarte comunicaciones de marketing sobre nuevas funcionalidades, ofertas y actualizaciones de la plataforma.</li>
                 <li>Elaborar estadísticas y análisis de uso agregados.</li>
               </ul>
               <p>
@@ -91,35 +91,36 @@ export default async function PrivacidadPage() {
               <p>Tus datos pueden ser compartidos con:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  <strong>Stripe, Inc.</strong> — procesamiento de pagos, con domicilio en EUA.
-                  Consulta su{' '}
+                  <strong>Stripe, Inc.</strong> — procesamiento de pagos, con domicilio en EUA. Consulta su{' '}
                   <a href="https://stripe.com/mx/privacy" target="_blank" rel="noopener noreferrer" className="text-orange-600 underline">
                     política de privacidad
                   </a>.
                 </li>
-                <li>
-                  <strong>Supabase, Inc.</strong> — base de datos e infraestructura en la nube.
-                </li>
-                <li>
-                  <strong>Vercel, Inc.</strong> — hospedaje de la Plataforma.
-                </li>
-                <li>
-                  <strong>Autoridades competentes</strong> — cuando sea requerido por ley o mandato judicial.
-                </li>
+                <li><strong>Supabase, Inc.</strong> — base de datos e infraestructura en la nube.</li>
+                <li><strong>Vercel, Inc.</strong> — hospedaje de la Plataforma.</li>
+                <li><strong>Autoridades competentes</strong> — cuando sea requerido por ley o mandato judicial.</li>
               </ul>
               <p>
-                misremates no vende ni comercializa tus datos personales a terceros con fines publicitarios.
+                Misremates.com.mx, no vende ni comercializa tus datos personales a terceros con fines
+                publicitarios.
               </p>
             </section>
 
             <section>
               <h2 className="text-lg font-bold text-slate-900">5. Derechos ARCO</h2>
               <p>
-                Conforme a la LFPDPPP, tienes derecho a <strong>Acceder, Rectificar, Cancelar u Oponerte</strong> (derechos ARCO) al tratamiento de tus datos personales.
+                Conforme a la LFPDPPP, tienes derecho a{' '}
+                <strong>Acceder, Rectificar, Cancelar u Oponerte</strong> (derechos ARCO) al
+                tratamiento de tus datos personales.
               </p>
               <p>Para ejercer tus derechos ARCO:</p>
               <ol className="list-decimal pl-5 space-y-1">
-                <li>Envía tu solicitud a <a href="mailto:soporte@misremates.com.mx" className="text-orange-600 underline">soporte@misremates.com.mx</a>.</li>
+                <li>
+                  Envía tu solicitud a{' '}
+                  <a href="mailto:soporte@misremates.com.mx" className="text-orange-600 underline">
+                    soporte@misremates.com.mx
+                  </a>.
+                </li>
                 <li>Incluye tu nombre completo, correo de registro y descripción del derecho que deseas ejercer.</li>
                 <li>Adjunta una copia de tu identificación oficial.</li>
               </ol>
@@ -198,11 +199,6 @@ export default async function PrivacidadPage() {
             <Link href="/terminos" className="text-orange-600 underline">
               Términos y Condiciones
             </Link>
-          </div>
-
-          <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-700">
-            Este documento es una base de referencia elaborada conforme a la LFPDPPP. Para uso
-            comercial, se recomienda revisión por un abogado especializado en protección de datos.
           </div>
         </div>
       </main>

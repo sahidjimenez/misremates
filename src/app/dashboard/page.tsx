@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { PlanLimitBar } from '@/components/shared/plan-limit-bar'
 import { getPlanDisplayName, formatCurrency } from '@/lib/utils'
 
-export const metadata = { title: 'Dashboard' }
+export const metadata = { title: 'Panel' }
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -33,7 +33,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Panel</h1>
           <p className="text-sm text-slate-500">Gestiona tu tienda y productos</p>
         </div>
         <Link href="/dashboard/products/new">
