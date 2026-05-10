@@ -223,7 +223,7 @@ export function CartDrawer({
                       onClick={handleWhatsApp}
                     >
                       <MessageCircle className="h-4 w-4" />
-                      {canPayOnline ? 'O contactar por WhatsApp' : 'Contactar por WhatsApp'}
+                      {canPayOnline ? 'O Pedir por WhatsApp' : 'Pedir por WhatsApp'}
                     </Button>
                   )}
 

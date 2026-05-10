@@ -97,7 +97,7 @@ export function ProductActions({
         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
           <Button size="lg" variant="outline" className="w-full gap-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white">
             <MessageCircle className="h-5 w-5" />
-            Contactar por WhatsApp
+            Comprar por WhatsApp
           </Button>
         </a>
       )}

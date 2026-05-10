@@ -107,7 +107,7 @@ export function ProductCard({ product, showStoreLink = false, onAddToCart }: Pro
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block">
                 <Button size="sm" className="w-full gap-2 bg-[#25D366] hover:bg-[#20BA5A]">
                   <MessageCircle className="h-4 w-4" />
-                  Contactar por WhatsApp
+                  Comprar por WhatsApp
                 </Button>
               </a>
             )
