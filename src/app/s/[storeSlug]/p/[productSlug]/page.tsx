@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, Tag, Package } from 'lucide-react'
+import { ChevronLeft, Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { Badge } from '@/components/ui/badge'
 import { ProductActions } from '@/components/store/product-actions'
+import { ProductImageCarousel } from '@/components/store/product-image-carousel'
 import { formatCurrency, formatDate, getConditionLabel } from '@/lib/utils'
 
 interface Props {
@@ -63,30 +64,10 @@ export default async function ProductPage({ params }: Props) {
 
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Images */}
-          <div className="space-y-3">
-            <div className="aspect-square overflow-hidden rounded-2xl bg-slate-100">
-              {product.images?.[0] ? (
-                <img
-                  src={product.images[0]}
-                  alt={product.title}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  <Tag className="h-20 w-20 text-slate-300" />
-                </div>
-              )}
-            </div>
-            {product.images?.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {product.images.slice(1).map((img: string, i: number) => (
-                  <div key={i} className="aspect-square overflow-hidden rounded-lg bg-slate-100">
-                    <img src={img} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductImageCarousel
+            images={product.images ?? []}
+            title={product.title}
+          />
 
           {/* Info */}
           <div className="space-y-5">
