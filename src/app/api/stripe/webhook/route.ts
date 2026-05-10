@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import type Stripe from 'stripe'
+import { createClient } from '@supabase/supabase-js'
 import { stripe, PLANS, type PlanKey } from '@/lib/stripe'
-import { createServiceClient } from '@/lib/supabase/server'
+
+function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
+}
 
 function planKeyFromPriceId(priceId: string): PlanKey {
   const entry = (Object.entries(PLANS) as [PlanKey, typeof PLANS[PlanKey]][])
@@ -28,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const supabase = await createServiceClient()
+  const supabase = createAdminClient()
 
   try {
     switch (event.type) {
