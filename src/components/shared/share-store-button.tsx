@@ -12,7 +12,7 @@ interface ShareStoreButtonProps {
 
 export function ShareStoreButton({ storeName, storeSlug }: ShareStoreButtonProps) {
   const [copied, setCopied] = useState(false)
-  const url = `${typeof window !== 'undefined' ? window.location.origin : 'https://misremates.com.mx'}/s/${storeSlug}`
+  const url = `https://misremates.com.mx/s/${storeSlug}`
 
   async function handleShare() {
     if (navigator.share) {
