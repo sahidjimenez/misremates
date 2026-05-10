@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlanLimitBar } from '@/components/shared/plan-limit-bar'
+import { ShareStoreButton } from '@/components/shared/share-store-button'
 import { getPlanDisplayName, formatCurrency } from '@/lib/utils'
 
 export const metadata = { title: 'Panel' }
@@ -126,7 +127,7 @@ export default async function DashboardPage() {
                     <p className="font-semibold text-slate-900">{store.name}</p>
                     <p className="text-sm text-slate-500">{store.description}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <a
                       href={`/s/${store.slug}`}
                       target="_blank"
@@ -138,6 +139,7 @@ export default async function DashboardPage() {
                         Ver tienda pública
                       </Button>
                     </a>
+                    <ShareStoreButton storeName={store.name} storeSlug={store.slug} />
                     <Link href="/dashboard/store">
                       <Button variant="ghost" size="sm">Editar tienda</Button>
                     </Link>
