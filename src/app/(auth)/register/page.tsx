@@ -71,7 +71,7 @@ const PLAN_OPTIONS = [
     desc: '$39.99/mes',
     color: 'border-slate-200 hover:border-blue-400',
     selectedColor: 'border-blue-400 bg-blue-50',
-    features: ['10 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+    features: ['10 productos', 'Tienda pública', 'WhatsApp'],
     warning: null,
   },
   {
@@ -81,7 +81,7 @@ const PLAN_OPTIONS = [
     desc: '$59.99/mes',
     color: 'border-slate-200 hover:border-yellow-400',
     selectedColor: 'border-yellow-400 bg-yellow-50',
-    features: ['20 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+    features: ['20 productos', 'Tienda pública', 'WhatsApp'],
     warning: null,
   },
   {

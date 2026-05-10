@@ -23,8 +23,8 @@ interface UpgradeModalProps {
 }
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  basico: ['10 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
-  intermedio: ['20 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
+  basico: ['10 productos', 'Tienda pública', 'Ventas por WhatsApp'],
+  intermedio: ['20 productos', 'Tienda pública', 'Ventas por WhatsApp'],
   pro: ['50 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
   corporativo: ['Productos ilimitados', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
 }

@@ -20,7 +20,7 @@ export const PLANS = {
     productLimit: 10,
     commissionPercentage: 0,
     stripePriceId: process.env.STRIPE_PRICE_BASICO,
-    onlinePayments: true,
+    onlinePayments: false,
   },
   intermedio: {
     name: 'Intermedio',
@@ -28,7 +28,7 @@ export const PLANS = {
     productLimit: 20,
     commissionPercentage: 0,
     stripePriceId: process.env.STRIPE_PRICE_INTERMEDIO,
-    onlinePayments: true,
+    onlinePayments: false,
   },
   pro: {
     name: 'Pro',

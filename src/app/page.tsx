@@ -50,7 +50,7 @@ export default async function LandingPage() {
                 </Button>
               </Link>
               <Link href="/pricing">
-                <Button size="lg" variant="outline">Ver precios</Button>
+                <Button size="lg" variant="outline">Ver planes</Button>
               </Link>
             </div>
             <p className="mt-4 text-sm text-slate-400">Sin tarjeta de crédito · Plan gratis para siempre</p>
@@ -125,7 +125,7 @@ export default async function LandingPage() {
                     { text: '10 productos', ok: true },
                     { text: 'Tienda pública', ok: true },
                     { text: 'Ventas por WhatsApp', ok: true },
-                    { text: 'Pagos en línea', ok: true },
+                    { text: 'Pagos en línea', ok: false },
                   ],
                   cta: 'Elegir Básico',
                 },
@@ -135,7 +135,7 @@ export default async function LandingPage() {
                     { text: '20 productos', ok: true },
                     { text: 'Tienda pública', ok: true },
                     { text: 'Ventas por WhatsApp', ok: true },
-                    { text: 'Pagos en línea', ok: true },
+                    { text: 'Pagos en línea', ok: false },
                   ],
                   cta: 'Elegir Intermedio',
                 },
@@ -210,7 +210,7 @@ export default async function LandingPage() {
         <section className="bg-slate-900 py-20 text-center text-white">
           <div className="mx-auto max-w-2xl px-4">
             <ShoppingBag className="mx-auto mb-4 h-12 w-12 text-orange-400" />
-            <h2 className="text-3xl font-bold">¿Listo para vender tus remates?</h2>
+            <h2 className="text-3xl font-bold">¿Listo para vender tus productos en remate?</h2>
             <p className="mt-4 text-slate-400">Crea tu tienda gratis hoy y empieza a vender en minutos.</p>
             <Link href="/register" className="mt-8 inline-block">
               <Button size="lg" variant="accent" className="gap-2">

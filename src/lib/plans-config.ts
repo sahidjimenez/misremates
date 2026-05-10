@@ -12,14 +12,14 @@ export const PLANS = {
     price: 39.99,
     productLimit: 10,
     commissionPercentage: 0,
-    onlinePayments: true,
+    onlinePayments: false,
   },
   intermedio: {
     name: 'Intermedio',
     price: 59.99,
     productLimit: 20,
     commissionPercentage: 0,
-    onlinePayments: true,
+    onlinePayments: false,
   },
   pro: {
     name: 'Pro',
