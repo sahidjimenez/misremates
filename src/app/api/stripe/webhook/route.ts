@@ -48,20 +48,41 @@ export async function POST(request: Request) {
           const subscriptionId = session.subscription as string
           const userId = session.metadata?.supabase_user_id
 
+          console.log('[webhook] checkout.session.completed', { userId, subscriptionId, customerId })
+
           if (userId && subscriptionId) {
             const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+            console.log('[webhook] subscription retrieved', { status: subscription.status, id: subscription.id })
+
             const priceId = subscription.items.data[0]?.price.id
             const planKey = planKeyFromPriceId(priceId)
+            console.log('[webhook] planKey resolved', { priceId, planKey })
 
-            const sub = subscription as unknown as { current_period_end: number; status: string }
-            await supabase.from('subscriptions').upsert({
+            // current_period_end was removed from the top-level type in newer API versions;
+            // access it via the raw object with a safe fallback
+            const rawSub = subscription as unknown as Record<string, unknown>
+            const periodEndTs = typeof rawSub.current_period_end === 'number'
+              ? rawSub.current_period_end
+              : null
+            const periodEndIso = periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null
+
+            console.log('[webhook] upserting subscription', { userId, planKey, periodEndIso })
+
+            const { error: upsertError } = await supabase.from('subscriptions').upsert({
               user_id: userId,
               plan_key: planKey,
               stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,
-              status: sub.status,
-              current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+              status: subscription.status,
+              current_period_end: periodEndIso,
             }, { onConflict: 'user_id' })
+
+            if (upsertError) {
+              console.error('[webhook] upsert error', upsertError)
+              throw new Error(`Supabase upsert failed: ${upsertError.message}`)
+            }
+
+            console.log('[webhook] subscription upserted successfully')
           }
         }
 
@@ -105,19 +126,29 @@ export async function POST(request: Request) {
 
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription
-        const subData = subscription as unknown as { current_period_end: number; status: string; metadata: Record<string, string>; items: { data: Array<{ price: { id: string } }> }; id: string }
+        const rawSub = subscription as unknown as Record<string, unknown>
 
-        const priceId = subData.items.data[0]?.price.id
+        const priceId = subscription.items.data[0]?.price.id
         const planKey = planKeyFromPriceId(priceId)
 
-        await supabase
+        const periodEndTs = typeof rawSub.current_period_end === 'number'
+          ? rawSub.current_period_end
+          : null
+        const periodEndIso = periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null
+
+        const { error: updateError } = await supabase
           .from('subscriptions')
           .update({
             plan_key: planKey,
-            status: subData.status,
-            current_period_end: new Date(subData.current_period_end * 1000).toISOString(),
+            status: subscription.status,
+            current_period_end: periodEndIso,
           })
-          .eq('stripe_subscription_id', subData.id)
+          .eq('stripe_subscription_id', subscription.id)
+
+        if (updateError) {
+          console.error('[webhook] subscription.updated error', updateError)
+          throw new Error(`Supabase update failed: ${updateError.message}`)
+        }
         break
       }
 
