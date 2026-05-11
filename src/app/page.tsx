@@ -30,7 +30,7 @@ export default async function LandingPage() {
       <Navbar user={user ? { email: user.email! } : null} />
       <main>
         {/* Hero */}
-        <section className="bg-gradient-to-b from-slate-50 to-white py-20 text-center">
+        <section className="bg-gradient-to-b from-slate-50 to-white py-10 md:py-20 text-center">
           <div className="mx-auto max-w-4xl px-4">
             <Badge variant="accent" className="mb-4 text-sm">
               🔥 La plataforma de remates #1 en México
@@ -39,7 +39,10 @@ export default async function LandingPage() {
               Vende tus productos en remate con{' '}
               <span className="text-orange-500">tu propia tienda online</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600">
+            <p className="mx-auto mt-6 max-w-2xl text-base italic text-slate-500">
+              Sabemos que cada artículo que pones a la venta cuenta una historia y representa un esfuerzo para ti. Queremos recordarte que esta plataforma es tu espacio: úsala para ofrecer tus productos o aquello que ya no necesitas en casa. Estamos aquí para ayudarte a que esos objetos encuentren un nuevo hogar y tú recibas ese impulso económico que buscas. ¡Tu éxito es el de todos!
+            </p>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
               Crea tu tienda online de remates en minutos. Publica productos, comparte tu enlace
               y recibe pedidos por WhatsApp — o activa pagos en línea con tu plan Pro.
             </p>
