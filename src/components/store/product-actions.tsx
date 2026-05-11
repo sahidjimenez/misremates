@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { MessageCircle, ShoppingCart, Plus, Minus, Check, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 import type { CartItem } from '@/lib/cart'
 
 interface ProductActionsProps {
@@ -15,7 +16,7 @@ interface ProductActionsProps {
   price: number
   image: string | null
   stock: number | null
-  whatsappUrl: string | null
+  whatsapp: string | null
   cartItems: CartItem[]
   onAddToCart: (item: Omit<CartItem, 'quantity'>) => void
 }
@@ -28,7 +29,7 @@ export function ProductActions({
   price,
   image,
   stock,
-  whatsappUrl,
+  whatsapp,
   cartItems,
   onAddToCart,
 }: ProductActionsProps) {
@@ -38,6 +39,16 @@ export function ProductActions({
   const outOfStock = stock !== null && stock <= 0
   const maxQty = stock ?? 99
   const inCart = cartItems.find((i) => i.productId === productId)
+
+  function handleWhatsApp() {
+    if (!whatsapp) return
+    const total = price * qty
+    const msg = `Hola, me gustaría comprar:\n\n• ${qty} ${title} = ${formatCurrency(total)}\n\nTotal: ${formatCurrency(total)}`
+    window.open(
+      `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`,
+      '_blank'
+    )
+  }
 
   function handleAdd() {
     for (let i = 0; i < qty; i++) {
@@ -94,13 +105,16 @@ export function ProductActions({
         )}
       </Button>
 
-      {whatsappUrl && (
-        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-          <Button size="lg" variant="outline" className="w-full gap-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white">
-            <MessageCircle className="h-5 w-5" />
-            Comprar por WhatsApp
-          </Button>
-        </a>
+      {whatsapp && (
+        <Button
+          size="lg"
+          variant="outline"
+          className="w-full gap-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white"
+          onClick={handleWhatsApp}
+        >
+          <MessageCircle className="h-5 w-5" />
+          Comprar por WhatsApp
+        </Button>
       )}
 
       <Link href={`/s/${storeSlug}`}>

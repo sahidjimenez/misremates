@@ -133,7 +133,6 @@ export default async function ProductPage({ params }: Props) {
               price={product.price}
               image={product.images?.[0] ?? null}
               stock={stock}
-              whatsappUrl={whatsappUrl}
             />
           </div>
         </div>

@@ -16,7 +16,6 @@ interface ProductPageClientProps {
   price: number
   image: string | null
   stock: number | null
-  whatsappUrl: string | null
 }
 
 export function ProductPageClient({
@@ -29,7 +28,6 @@ export function ProductPageClient({
   price,
   image,
   stock,
-  whatsappUrl,
 }: ProductPageClientProps) {
   const { items, count, total, addItem, removeItem, updateQuantity, clearCart } = useCart(storeSlug)
   const [cartOpen, setCartOpen] = useState(false)
@@ -44,7 +42,7 @@ export function ProductPageClient({
         price={price}
         image={image}
         stock={stock}
-        whatsappUrl={whatsappUrl}
+        whatsapp={whatsapp}
         cartItems={items}
         onAddToCart={addItem}
       />
