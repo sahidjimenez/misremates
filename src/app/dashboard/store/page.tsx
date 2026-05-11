@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Save, Loader2, Store, ExternalLink } from 'lucide-react'
+import { Save, Loader2, Store, ExternalLink, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,6 +26,10 @@ export default function StorePage() {
   const [loading, setLoading] = useState(false)
   const [store, setStore] = useState<{ id: string; slug: string } | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -47,25 +51,59 @@ export default function StorePage() {
 
       if (data) {
         setStore({ id: data.id, slug: data.slug })
+        setLogoUrl(data.logo_url ?? null)
         reset({ name: data.name, description: data.description ?? '', whatsapp: data.whatsapp ?? '' })
       }
     }
     loadStore()
   }, [reset])
 
+  function handleLogoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoFile(file)
+    setLogoPreview(URL.createObjectURL(file))
+  }
+
+  function removeLogo() {
+    setLogoFile(null)
+    setLogoPreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  async function uploadLogo(userId: string): Promise<string | null> {
+    if (!logoFile) return logoUrl
+    const supabase = createClient()
+    const ext = logoFile.name.split('.').pop()
+    const path = `logos/${userId}/${Date.now()}.${ext}`
+    const { data: uploaded, error } = await supabase.storage
+      .from('product-images')
+      .upload(path, logoFile, { upsert: true })
+    if (error || !uploaded) return logoUrl
+    const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(path)
+    return urlData.publicUrl
+  }
+
   async function onSubmit(data: FormData) {
     if (!userId) return
     setLoading(true)
     const supabase = createClient()
 
+    const newLogoUrl = await uploadLogo(userId)
+
     if (store) {
       const { error } = await supabase
         .from('stores')
-        .update({ name: data.name, description: data.description, whatsapp: data.whatsapp })
+        .update({ name: data.name, description: data.description, whatsapp: data.whatsapp, logo_url: newLogoUrl })
         .eq('id', store.id)
 
       if (error) toast.error('Error al guardar')
-      else toast.success('Tienda actualizada')
+      else {
+        setLogoUrl(newLogoUrl)
+        setLogoFile(null)
+        setLogoPreview(null)
+        toast.success('Tienda actualizada')
+      }
     } else {
       const slug = generateUniqueSlug(data.name)
       const { data: sellerProfile } = await supabase
@@ -95,6 +133,7 @@ export default function StorePage() {
           slug,
           description: data.description,
           whatsapp: data.whatsapp,
+          logo_url: newLogoUrl,
           status: 'active',
         })
         .select('id, slug')
@@ -103,11 +142,16 @@ export default function StorePage() {
       if (error) toast.error('Error al crear la tienda')
       else {
         setStore({ id: newStore.id, slug: newStore.slug })
+        setLogoUrl(newLogoUrl)
+        setLogoFile(null)
+        setLogoPreview(null)
         toast.success('¡Tienda creada!')
       }
     }
     setLoading(false)
   }
+
+  const displayLogo = logoPreview ?? logoUrl
 
   return (
     <div className="space-y-6">
@@ -140,6 +184,51 @@ export default function StorePage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Logo */}
+            <div className="space-y-2">
+              <Label>Logo de la tienda</Label>
+              <div className="flex items-center gap-4">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 border-dashed border-slate-200 bg-slate-50">
+                  {displayLogo ? (
+                    <>
+                      <img src={displayLogo} alt="Logo" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={removeLogo}
+                        className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Store className="h-8 w-8 text-slate-300" />
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    className="hidden"
+                    onChange={handleLogoSelect}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {displayLogo ? 'Cambiar logo' : 'Subir logo'}
+                  </Button>
+                  <p className="text-xs text-slate-400">PNG, JPG o WebP. Recomendado: 200×200 px</p>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="name">Nombre de la tienda *</Label>
               <Input id="name" placeholder="Ej: Remates González" {...register('name')} />
