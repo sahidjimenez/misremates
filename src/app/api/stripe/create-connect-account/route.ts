@@ -21,21 +21,27 @@ export async function POST() {
     return NextResponse.json({ accountId: profile.stripe_account_id })
   }
 
-  const account = await stripe.accounts.create({
-    type: 'express',
-    country: 'MX',
-    email: user.email!,
-    capabilities: {
-      card_payments: { requested: true },
-      transfers: { requested: true },
-    },
-    metadata: { supabase_user_id: user.id },
-  })
+  try {
+    const account = await stripe.accounts.create({
+      type: 'express',
+      country: 'MX',
+      email: user.email!,
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+      metadata: { supabase_user_id: user.id },
+    })
 
-  await supabase
-    .from('seller_profiles')
-    .update({ stripe_account_id: account.id, stripe_onboarding_complete: false })
-    .eq('user_id', user.id)
+    await supabase
+      .from('seller_profiles')
+      .update({ stripe_account_id: account.id, stripe_onboarding_complete: false })
+      .eq('user_id', user.id)
 
-  return NextResponse.json({ accountId: account.id })
+    return NextResponse.json({ accountId: account.id })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Error al crear cuenta de Stripe'
+    console.error('[create-connect-account]', err)
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }
