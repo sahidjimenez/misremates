@@ -120,7 +120,7 @@ export function ProductActions({
           onClick={handleWhatsApp}
         >
           <MessageCircle className="h-5 w-5" />
-          Comprar por WhatsApp
+          Finalizar compra
         </Button>
       )}
 
