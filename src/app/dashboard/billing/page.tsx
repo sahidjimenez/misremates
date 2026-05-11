@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { Check, Zap, Crown, Star } from 'lucide-react'
+import { Check, X, Zap, Crown, Star } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { getUserPlan } from '@/lib/plans'
 import { PLANS } from '@/lib/stripe'
@@ -30,28 +30,53 @@ export default async function BillingPage() {
     {
       key: 'free' as const,
       icon: null,
-      features: ['3 productos', 'Tienda pública', 'Ventas por WhatsApp'],
+      features: [
+        { text: '3 productos', ok: true },
+        { text: 'Tienda pública', ok: true },
+        { text: 'Ventas por WhatsApp', ok: true },
+        { text: 'Pagos en línea', ok: false },
+      ],
     },
     {
       key: 'basico' as const,
       icon: Zap,
-      features: ['10 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+      features: [
+        { text: '10 productos', ok: true },
+        { text: 'Tienda pública', ok: true },
+        { text: 'WhatsApp', ok: true },
+        { text: 'Pagos en línea', ok: false },
+      ],
     },
     {
       key: 'intermedio' as const,
       icon: Star,
-      features: ['20 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+      features: [
+        { text: '20 productos', ok: true },
+        { text: 'Tienda pública', ok: true },
+        { text: 'WhatsApp', ok: true },
+        { text: 'Pagos en línea', ok: false },
+      ],
     },
     {
       key: 'pro' as const,
       icon: Star,
       popular: true,
-      features: ['50 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+      features: [
+        { text: '50 productos', ok: true },
+        { text: 'Tienda pública', ok: true },
+        { text: 'Pagos en línea', ok: true },
+        { text: 'WhatsApp', ok: true },
+      ],
     },
     {
       key: 'corporativo' as const,
       icon: Crown,
-      features: ['Productos ilimitados', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+      features: [
+        { text: 'Productos ilimitados', ok: true },
+        { text: 'Tienda pública', ok: true },
+        { text: 'Pagos en línea', ok: true },
+        { text: 'WhatsApp', ok: true },
+      ],
     },
   ]
 
@@ -120,9 +145,12 @@ export default async function BillingPage() {
               <CardContent className="flex flex-1 flex-col justify-between pt-0">
                 <ul className="space-y-2">
                   {features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
-                      {f}
+                    <li key={f.text} className={`flex items-start gap-2 text-sm ${f.ok ? 'text-slate-600' : 'text-slate-400'}`}>
+                      {f.ok
+                        ? <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+                        : <X className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" />
+                      }
+                      {f.text}
                     </li>
                   ))}
                 </ul>
