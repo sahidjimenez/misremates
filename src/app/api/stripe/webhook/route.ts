@@ -58,12 +58,9 @@ export async function POST(request: Request) {
             const planKey = planKeyFromPriceId(priceId)
             console.log('[webhook] planKey resolved', { priceId, planKey })
 
-            // current_period_end was removed from the top-level type in newer API versions;
-            // access it via the raw object with a safe fallback
-            const rawSub = subscription as unknown as Record<string, unknown>
-            const periodEndTs = typeof rawSub.current_period_end === 'number'
-              ? rawSub.current_period_end
-              : null
+            // In Stripe SDK v22+ (API 2026-04-22.dahlia) current_period_end moved to
+            // the subscription item level
+            const periodEndTs = subscription.items.data[0]?.current_period_end ?? null
             const periodEndIso = periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null
 
             console.log('[webhook] upserting subscription', { userId, planKey, periodEndIso })
@@ -126,14 +123,11 @@ export async function POST(request: Request) {
 
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription
-        const rawSub = subscription as unknown as Record<string, unknown>
 
         const priceId = subscription.items.data[0]?.price.id
         const planKey = planKeyFromPriceId(priceId)
 
-        const periodEndTs = typeof rawSub.current_period_end === 'number'
-          ? rawSub.current_period_end
-          : null
+        const periodEndTs = subscription.items.data[0]?.current_period_end ?? null
         const periodEndIso = periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null
 
         const { error: updateError } = await supabase
