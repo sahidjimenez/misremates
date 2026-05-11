@@ -42,8 +42,15 @@ export function ProductActions({
 
   function handleWhatsApp() {
     if (!whatsapp) return
-    const total = price * qty
-    const msg = `Hola, me gustaría comprar:\n\n• ${qty} ${title} = ${formatCurrency(total)}\n\nTotal: ${formatCurrency(total)}`
+    if (cartItems.length === 0) {
+      toast.error('Agrega productos al carrito primero')
+      return
+    }
+    const cartTotal = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
+    const lines = cartItems.map(
+      (i) => `• ${i.quantity} ${i.title} = ${formatCurrency(i.price * i.quantity)}`
+    )
+    const msg = `Hola, me gustaría comprar los siguientes productos de tu tienda:\n\n${lines.join('\n')}\n\nTotal: ${formatCurrency(cartTotal)}`
     window.open(
       `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`,
       '_blank'
