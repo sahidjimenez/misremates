@@ -33,7 +33,7 @@ export function Navbar({ user }: NavbarProps) {
         {/* Desktop nav */}
         <div className="hidden items-center gap-6 md:flex">
           <Link href="/pricing" className="text-sm text-slate-600 hover:text-slate-900">
-            Precios
+            Planes
           </Link>
           {user ? (
             <>
@@ -74,7 +74,7 @@ export function Navbar({ user }: NavbarProps) {
       {mobileOpen && (
         <div className="border-t border-slate-200 bg-white px-4 pb-4 md:hidden">
           <div className="flex flex-col gap-2 pt-3">
-            <Link href="/pricing" className="py-2 text-sm text-slate-600">Precios</Link>
+            <Link href="/pricing" className="py-2 text-sm text-slate-600">Planes</Link>
             {user ? (
               <>
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
