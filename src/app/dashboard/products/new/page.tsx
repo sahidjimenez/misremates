@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Loader2, Upload, X, AlertCircle } from 'lucide-react'
+import { Loader2, Upload, X, AlertCircle, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,6 +44,8 @@ export default function NewProductPage() {
   const [upgradeRequired, setUpgradeRequired] = useState<'basico' | 'intermedio' | 'pro' | 'corporativo' | null>(null)
   const [storeId, setStoreId] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
+  const [stripeEnabled, setStripeEnabled] = useState(false)
+  const [acceptsCardPayment, setAcceptsCardPayment] = useState(false)
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -57,14 +59,26 @@ export default function NewProductPage() {
       if (!user) return
 
       setUserId(user.id)
-      const { data: store } = await supabase
-        .from('stores')
-        .select('id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single()
+      const [{ data: store }, { data: profile }] = await Promise.all([
+        supabase.from('stores').select('id').eq('user_id', user.id).limit(1).single(),
+        supabase.from('seller_profiles').select('stripe_account_id, stripe_onboarding_complete').eq('user_id', user.id).single(),
+      ])
 
       setStoreId(store?.id ?? null)
+
+      if (profile?.stripe_account_id && profile.stripe_onboarding_complete) {
+        const { data: sub } = await supabase
+          .from('subscriptions')
+          .select('plan_key, status')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .limit(1)
+          .single()
+        const planKey = sub?.plan_key ?? 'free'
+        if (planKey === 'pro' || planKey === 'corporativo') {
+          setStripeEnabled(true)
+        }
+      }
     }
     init()
   }, [])
@@ -142,6 +156,7 @@ export default function NewProductPage() {
       images: imageUrls,
       status: data.status,
       is_featured: false,
+      accepts_card_payment: stripeEnabled ? acceptsCardPayment : false,
     })
 
     if (error) {
@@ -273,6 +288,43 @@ export default function NewProductPage() {
             </div>
           </CardContent>
         </Card>
+
+        {stripeEnabled && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Opciones de pago</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <label className="flex cursor-pointer items-start gap-3">
+                <div className="relative mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={acceptsCardPayment}
+                    onChange={(e) => setAcceptsCardPayment(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div
+                    onClick={() => setAcceptsCardPayment((v) => !v)}
+                    className={`h-5 w-9 rounded-full transition-colors ${acceptsCardPayment ? 'bg-green-500' : 'bg-slate-200'} relative cursor-pointer`}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${acceptsCardPayment ? 'translate-x-4' : 'translate-x-0'}`}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 font-medium text-slate-900">
+                    <CreditCard className="h-4 w-4 text-green-600" />
+                    Aceptar pago con tarjeta
+                  </div>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Los compradores podrán pagar este artículo en línea con tarjeta de crédito o débito.
+                  </p>
+                </div>
+              </label>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>

@@ -12,6 +12,7 @@ const schema = z.object({
   condition: z.enum(['nuevo', 'como_nuevo', 'buen_estado', 'usado']).optional(),
   images: z.array(z.string()).max(4).optional(),
   status: z.enum(['draft', 'active', 'sold', 'paused']).optional(),
+  accepts_card_payment: z.boolean().optional(),
 })
 
 export async function PATCH(request: Request) {

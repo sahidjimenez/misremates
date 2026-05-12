@@ -10,6 +10,7 @@ import {
   CreditCard,
   Zap,
   Shield,
+  ShoppingBag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -17,6 +18,7 @@ const navItems = [
   { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard, exact: true },
   { href: '/dashboard/store', label: 'Mi tienda', icon: Store },
   { href: '/dashboard/products', label: 'Productos', icon: Package },
+  { href: '/dashboard/orders', label: 'Mis ventas', icon: ShoppingBag },
   { href: '/dashboard/billing', label: 'Plan y pagos', icon: CreditCard },
   { href: '/dashboard/connect', label: 'Cobros online', icon: Zap },
 ]

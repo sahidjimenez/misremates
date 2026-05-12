@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: Props) {
 
   let canPayOnline = false
   const sp = store.seller_profiles
-  if (sp?.stripe_account_id && sp.stripe_onboarding_complete) {
+  if (sp?.stripe_account_id && sp.stripe_onboarding_complete && product.accepts_card_payment) {
     const planKey = await getUserPlan(store.user_id)
     canPayOnline = PLANS[planKey].onlinePayments
   }

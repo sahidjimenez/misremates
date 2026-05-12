@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Loader2, X, Upload, Trash2, AlertTriangle } from 'lucide-react'
+import { Loader2, X, Upload, Trash2, AlertTriangle, CreditCard } from 'lucide-react'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
@@ -44,6 +44,7 @@ export interface ProductForEdit {
   condition: string
   images: string[]
   status: string
+  accepts_card_payment?: boolean
 }
 
 interface EditProductModalProps {
@@ -52,14 +53,16 @@ interface EditProductModalProps {
   onClose: () => void
   onUpdated: (updated: ProductForEdit) => void
   onDeleted: (id: string) => void
+  stripeEnabled?: boolean
 }
 
-export function EditProductModal({ product, open, onClose, onUpdated, onDeleted }: EditProductModalProps) {
+export function EditProductModal({ product, open, onClose, onUpdated, onDeleted, stripeEnabled = false }: EditProductModalProps) {
   const [loading, setLoading] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [newFiles, setNewFiles] = useState<File[]>([])
   const [newPreviews, setNewPreviews] = useState<string[]>([])
+  const [acceptsCardPayment, setAcceptsCardPayment] = useState(false)
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -81,6 +84,7 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
     setNewFiles([])
     setNewPreviews([])
     setConfirmDelete(false)
+    setAcceptsCardPayment(product.accepts_card_payment ?? false)
   }, [product, reset])
 
   function handleClose() {
@@ -133,7 +137,12 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
     const res = await fetch('/api/products/update', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: product.id, ...data, images: allImages }),
+      body: JSON.stringify({
+        id: product.id,
+        ...data,
+        images: allImages,
+        accepts_card_payment: stripeEnabled ? acceptsCardPayment : false,
+      }),
     })
 
     const result = await res.json()
@@ -145,7 +154,7 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
     }
 
     toast.success('Producto actualizado')
-    onUpdated({ ...product, ...data, images: allImages })
+    onUpdated({ ...product, ...data, images: allImages, accepts_card_payment: stripeEnabled ? acceptsCardPayment : false })
     handleClose()
     setLoading(false)
   }
@@ -278,6 +287,33 @@ export function EditProductModal({ product, open, onClose, onUpdated, onDeleted 
               </Select>
             </div>
           </div>
+
+          {/* Card payment toggle */}
+          {stripeEnabled && (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <label className="flex cursor-pointer items-start gap-3">
+                <div className="relative mt-0.5">
+                  <div
+                    onClick={() => setAcceptsCardPayment((v) => !v)}
+                    className={`h-5 w-9 rounded-full transition-colors ${acceptsCardPayment ? 'bg-green-500' : 'bg-slate-200'} relative cursor-pointer`}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${acceptsCardPayment ? 'translate-x-4' : 'translate-x-0'}`}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 font-medium text-slate-900">
+                    <CreditCard className="h-4 w-4 text-green-600" />
+                    Aceptar pago con tarjeta
+                  </div>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Los compradores podrán pagar este artículo en línea con tarjeta.
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
 
           {/* Images */}
           <div className="space-y-2">

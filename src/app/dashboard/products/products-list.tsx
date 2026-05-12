@@ -31,7 +31,7 @@ interface Product extends ProductForEdit {
   stores: { slug: string; name: string } | null
 }
 
-export function ProductsList({ initialProducts }: { initialProducts: Product[] }) {
+export function ProductsList({ initialProducts, stripeEnabled = false }: { initialProducts: Product[]; stripeEnabled?: boolean }) {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>(initialProducts)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -143,6 +143,7 @@ export function ProductsList({ initialProducts }: { initialProducts: Product[] }
         onClose={() => setEditingProduct(null)}
         onUpdated={handleUpdated}
         onDeleted={handleDeleted}
+        stripeEnabled={stripeEnabled}
       />
     </>
   )
