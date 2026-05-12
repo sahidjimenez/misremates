@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, getPlanDisplayName } from '@/lib/utils'
 import { BillingButton } from './billing-button'
+import { CancelPlanButton } from './cancel-plan-button'
 
 export const metadata = { title: 'Plan y pagos' }
 
@@ -91,13 +92,16 @@ export default async function BillingPage() {
 
       {subscription && (
         <Card className="border-green-200 bg-green-50">
-          <CardContent className="p-4">
-            <p className="text-sm font-medium text-green-800">
-              Suscripción activa hasta:{' '}
-              {subscription.current_period_end
-                ? new Date(subscription.current_period_end).toLocaleDateString('es-MX')
-                : 'N/A'}
-            </p>
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <p className="text-sm font-medium text-green-800">
+                Suscripción activa hasta:{' '}
+                {subscription.current_period_end
+                  ? new Date(subscription.current_period_end).toLocaleDateString('es-MX')
+                  : 'N/A'}
+              </p>
+              <CancelPlanButton hadOnlinePayments={PLANS[currentPlan]?.onlinePayments ?? false} />
+            </div>
           </CardContent>
         </Card>
       )}
