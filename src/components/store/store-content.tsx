@@ -26,6 +26,7 @@ interface StoreContentProps {
   storeSlug: string
   storeName: string
   storeDescription: string | null
+  logoUrl: string | null
   whatsapp: string | null
   seller: { display_name: string; city?: string; state?: string } | null
   canPayOnline: boolean
@@ -36,6 +37,7 @@ export function StoreContent({
   storeSlug,
   storeName,
   storeDescription,
+  logoUrl,
   whatsapp,
   seller,
   canPayOnline,
@@ -54,9 +56,17 @@ export function StoreContent({
         <div className="mx-auto max-w-7xl px-4 py-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-2xl font-bold text-white shadow-md">
-                {storeName[0].toUpperCase()}
-              </div>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={`Logo de ${storeName}`}
+                  className="h-16 w-16 rounded-2xl object-cover shadow-md"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-2xl font-bold text-white shadow-md">
+                  {storeName[0].toUpperCase()}
+                </div>
+              )}
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">{storeName}</h1>
                 {seller && (seller.city || seller.state) && (

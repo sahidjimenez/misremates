@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props) {
   const supabase = await createClient()
   const { data: store } = await supabase
     .from('stores')
-    .select('name, description')
+    .select('name, description, logo_url')
     .eq('slug', storeSlug)
     .single()
 
@@ -24,6 +24,11 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: store.name,
     description: store.description ?? `Tienda de remates: ${store.name}`,
+    openGraph: {
+      title: store.name,
+      description: store.description ?? `Tienda de remates: ${store.name}`,
+      ...(store.logo_url ? { images: [{ url: store.logo_url }] } : {}),
+    },
   }
 }
 
@@ -77,6 +82,7 @@ export default async function StorePage({ params }: Props) {
           storeSlug={storeSlug}
           storeName={store.name}
           storeDescription={store.description}
+          logoUrl={store.logo_url ?? null}
           whatsapp={store.whatsapp}
           seller={seller}
           canPayOnline={canPayOnline}
