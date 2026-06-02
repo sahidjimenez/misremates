@@ -39,7 +39,7 @@ export default async function BillingPage() {
       ],
     },
     {
-      key: 'basico' as const,
+      key: 'superbasico' as const,
       icon: Zap,
       features: [
         { text: '10 productos', ok: true },
@@ -49,10 +49,20 @@ export default async function BillingPage() {
       ],
     },
     {
+      key: 'basico' as const,
+      icon: Zap,
+      features: [
+        { text: '20 productos', ok: true },
+        { text: 'Tienda pública', ok: true },
+        { text: 'WhatsApp', ok: true },
+        { text: 'Pagos en línea', ok: false },
+      ],
+    },
+    {
       key: 'intermedio' as const,
       icon: Star,
       features: [
-        { text: '20 productos', ok: true },
+        { text: '80 productos', ok: true },
         { text: 'Tienda pública', ok: true },
         { text: 'WhatsApp', ok: true },
         { text: 'Pagos en línea', ok: false },
@@ -63,7 +73,7 @@ export default async function BillingPage() {
       icon: Star,
       popular: true,
       features: [
-        { text: '50 productos', ok: true },
+        { text: '100 productos', ok: true },
         { text: 'Tienda pública', ok: true },
         { text: 'Pagos en línea', ok: true },
         { text: 'WhatsApp', ok: true },
@@ -106,7 +116,7 @@ export default async function BillingPage() {
         </Card>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         {plans.map(({ key, icon: Icon, popular, features }) => {
           const plan = PLANS[key]
           const isCurrent = currentPlan === key

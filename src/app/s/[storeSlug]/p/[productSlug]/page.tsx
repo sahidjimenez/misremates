@@ -20,12 +20,33 @@ export async function generateMetadata({ params }: Props) {
   const supabase = await createClient()
   const { data: product } = await supabase
     .from('products')
-    .select('title, description')
+    .select('title, description, images, price')
     .eq('slug', productSlug)
     .single()
 
   if (!product) return { title: 'Producto no encontrado' }
-  return { title: product.title, description: product.description ?? product.title }
+
+  const ogImage = product.images?.[0]
+  const desc = product.description
+    ? `${product.description} — $${product.price} MXN`
+    : `$${product.price} MXN`
+
+  return {
+    title: product.title,
+    description: desc,
+    openGraph: {
+      title: product.title,
+      description: desc,
+      type: 'website',
+      ...(ogImage ? { images: [{ url: ogImage, alt: product.title }] } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.title,
+      description: desc,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
+  }
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -67,8 +88,28 @@ export default async function ProductPage({ params }: Props) {
     canPayOnline = PLANS[planKey].onlinePayments
   }
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://misremates.com.mx'
+  const productUrl = `${appUrl}/s/${storeSlug}/p/${productSlug}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description ?? product.title,
+    image: (product.images ?? []).slice(0, 5),
+    url: productUrl,
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'MXN',
+      availability: stock === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      url: productUrl,
+      seller: { '@type': 'Organization', name: store.name },
+    },
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 py-8">
         <Link

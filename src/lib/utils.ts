@@ -42,6 +42,7 @@ export function formatDate(date: string): string {
 export function getPlanDisplayName(plan: string): string {
   const names: Record<string, string> = {
     free: 'Gratis',
+    superbasico: 'Superbásico',
     basico: 'Básico',
     intermedio: 'Intermedio',
     pro: 'Pro',

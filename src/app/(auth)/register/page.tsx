@@ -65,13 +65,23 @@ const PLAN_OPTIONS = [
     warning: null,
   },
   {
-    key: 'basico' as const,
+    key: 'superbasico' as const,
     icon: Zap,
-    label: 'Básico',
-    desc: '$39.99/mes',
+    label: 'Superbásico',
+    desc: '$19.99/mes',
     color: 'border-slate-200 hover:border-blue-400',
     selectedColor: 'border-blue-400 bg-blue-50',
     features: ['10 productos', 'Tienda pública', 'WhatsApp'],
+    warning: null,
+  },
+  {
+    key: 'basico' as const,
+    icon: Zap,
+    label: 'Básico',
+    desc: '$29.99/mes',
+    color: 'border-slate-200 hover:border-blue-400',
+    selectedColor: 'border-blue-400 bg-blue-50',
+    features: ['20 productos', 'Tienda pública', 'WhatsApp'],
     warning: null,
   },
   {
@@ -81,7 +91,7 @@ const PLAN_OPTIONS = [
     desc: '$59.99/mes',
     color: 'border-slate-200 hover:border-yellow-400',
     selectedColor: 'border-yellow-400 bg-yellow-50',
-    features: ['20 productos', 'Tienda pública', 'WhatsApp'],
+    features: ['80 productos', 'Tienda pública', 'WhatsApp'],
     warning: null,
   },
   {
@@ -92,7 +102,7 @@ const PLAN_OPTIONS = [
     color: 'border-slate-200 hover:border-green-400',
     selectedColor: 'border-green-500 bg-green-50',
     popular: true,
-    features: ['50 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
+    features: ['100 productos', 'Tienda pública', 'Pagos en línea', 'WhatsApp'],
     warning: null,
   },
   {
@@ -157,7 +167,7 @@ function RegisterFlow() {
 
   const [step, setStep] = useState(initialStep)
   const [loading, setLoading] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'basico' | 'intermedio' | 'pro' | 'corporativo'>('free')
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'superbasico' | 'basico' | 'intermedio' | 'pro' | 'corporativo'>('free')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [accountCreated, setAccountCreated] = useState(initialStep > 1)
   const [storeId, setStoreId] = useState<string | null>(null)

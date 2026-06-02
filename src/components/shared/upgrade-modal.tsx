@@ -19,20 +19,21 @@ interface UpgradeModalProps {
   open: boolean
   onClose: () => void
   reason: string
-  upgradeRequired?: 'basico' | 'intermedio' | 'pro' | 'corporativo' | null
+  upgradeRequired?: 'superbasico' | 'basico' | 'intermedio' | 'pro' | 'corporativo' | null
 }
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  basico: ['10 productos', 'Tienda pública', 'Ventas por WhatsApp'],
-  intermedio: ['20 productos', 'Tienda pública', 'Ventas por WhatsApp'],
-  pro: ['50 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
+  superbasico: ['10 productos', 'Tienda pública', 'Ventas por WhatsApp'],
+  basico: ['20 productos', 'Tienda pública', 'Ventas por WhatsApp'],
+  intermedio: ['80 productos', 'Tienda pública', 'Ventas por WhatsApp'],
+  pro: ['100 productos', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
   corporativo: ['Productos ilimitados', 'Tienda pública', 'Pagos en línea', 'Ventas por WhatsApp'],
 }
 
 export function UpgradeModal({ open, onClose, reason, upgradeRequired }: UpgradeModalProps) {
   const [loading, setLoading] = useState(false)
 
-  const planKey = upgradeRequired ?? 'basico'
+  const planKey = upgradeRequired ?? 'superbasico'
   const plan = PLANS[planKey as PlanKey]
   const features = PLAN_FEATURES[planKey] ?? []
 

@@ -6,6 +6,18 @@ import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { createClient } from '@/lib/supabase/server'
 
+export const metadata = {
+  title: 'Vende tus remates con tu propia tienda online — misremates.com.mx',
+  description:
+    'Crea tu tienda de remates gratis en México. Publica productos, comparte tu enlace y vende por WhatsApp o activa pagos en línea. Sin comisiones.',
+  openGraph: {
+    title: 'misremates.com.mx — La plataforma de remates #1 en México',
+    description:
+      'Crea tu tienda de remates gratis. Publica productos, comparte tu tienda y vende por WhatsApp o con pagos en línea.',
+    type: 'website',
+  },
+}
+
 export default async function LandingPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

@@ -33,7 +33,8 @@ export async function checkPlanLimits(userId: string): Promise<PlanLimits> {
 
   if (productLimit !== null && currentProductCount >= productLimit) {
     const upgradeTarget =
-      planKey === 'free' ? 'basico'
+      planKey === 'free' ? 'superbasico'
+      : planKey === 'superbasico' ? 'basico'
       : planKey === 'basico' ? 'intermedio'
       : planKey === 'intermedio' ? 'pro'
       : 'corporativo'
@@ -65,7 +66,8 @@ export function checkPlanLimitsSync(params: {
 
   if (plan.productLimit !== null && currentProductCount >= plan.productLimit) {
     const upgradeRequired =
-      planKey === 'free' ? 'basico'
+      planKey === 'free' ? 'superbasico'
+      : planKey === 'superbasico' ? 'basico'
       : planKey === 'basico' ? 'intermedio'
       : planKey === 'intermedio' ? 'pro'
       : 'corporativo'

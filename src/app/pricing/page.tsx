@@ -6,7 +6,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/server'
 
-export const metadata = { title: 'Precios' }
+export const metadata = {
+  title: 'Planes y Precios',
+  description:
+    'Elige el plan que mejor se adapte a tu negocio. Desde gratis hasta corporativo. Sin comisiones, cancela cuando quieras.',
+  openGraph: {
+    title: 'Planes y Precios — misremates.com.mx',
+    description:
+      'Desde $0 hasta $299/mes. Vende tus remates con tu propia tienda online sin comisiones.',
+  },
+}
 
 type PlanFeature = { text: string; ok: boolean; note?: string }
 
@@ -35,12 +44,26 @@ const plans: Array<{
     href: '/register',
   },
   {
-    key: 'basico',
-    name: 'Básico',
-    price: 39.99,
-    desc: 'Para emprendedores',
+    key: 'superbasico',
+    name: 'Superbásico',
+    price: 19.99,
+    desc: 'Para empezar a vender',
     features: [
       { text: '10 productos', ok: true },
+      { text: 'Tienda pública', ok: true },
+      { text: 'Ventas por WhatsApp', ok: true },
+      { text: 'Pagos en línea', ok: false },
+    ],
+    cta: 'Elegir Superbásico',
+    href: '/register',
+  },
+  {
+    key: 'basico',
+    name: 'Básico',
+    price: 29.99,
+    desc: 'Para emprendedores',
+    features: [
+      { text: '20 productos', ok: true },
       { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
       { text: 'Pagos en línea', ok: false },
@@ -54,7 +77,7 @@ const plans: Array<{
     price: 59.99,
     desc: 'Para vendedores en crecimiento',
     features: [
-      { text: '20 productos', ok: true },
+      { text: '80 productos', ok: true },
       { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
       { text: 'Pagos en línea', ok: false },
@@ -69,7 +92,7 @@ const plans: Array<{
     popular: true,
     desc: 'Para vendedores activos',
     features: [
-      { text: '50 productos', ok: true },
+      { text: '100 productos', ok: true },
       { text: 'Tienda pública', ok: true },
       { text: 'Ventas por WhatsApp', ok: true },
       { text: 'Pagos en línea', ok: true },
@@ -109,7 +132,7 @@ export default async function PricingPage() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-6">
             {plans.map((plan) => (
               <div
                 key={plan.key}

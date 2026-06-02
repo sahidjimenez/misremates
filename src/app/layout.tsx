@@ -15,6 +15,20 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/icon-192.png',
   },
+  openGraph: {
+    siteName: 'misremates.com.mx',
+    locale: 'es_MX',
+    type: 'website',
+    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'misremates.com.mx' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/icon-512.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

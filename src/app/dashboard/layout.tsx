@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { DashboardSidebar } from '@/components/layout/dashboard-sidebar'
 import { DashboardTopbar } from '@/components/layout/dashboard-topbar'
 
+export const metadata = { robots: { index: false, follow: false } }
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

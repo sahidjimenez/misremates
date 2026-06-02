@@ -14,10 +14,18 @@ export const PLANS = {
     stripePriceId: null,
     onlinePayments: false,
   },
+  superbasico: {
+    name: 'Superbásico',
+    price: 19.99,
+    productLimit: 10,
+    commissionPercentage: 0,
+    stripePriceId: process.env.STRIPE_PRICE_SUPERBASICO,
+    onlinePayments: false,
+  },
   basico: {
     name: 'Básico',
-    price: 39.99,
-    productLimit: 10,
+    price: 29.99,
+    productLimit: 20,
     commissionPercentage: 0,
     stripePriceId: process.env.STRIPE_PRICE_BASICO,
     onlinePayments: false,
@@ -25,7 +33,7 @@ export const PLANS = {
   intermedio: {
     name: 'Intermedio',
     price: 59.99,
-    productLimit: 20,
+    productLimit: 80,
     commissionPercentage: 0,
     stripePriceId: process.env.STRIPE_PRICE_INTERMEDIO,
     onlinePayments: false,
@@ -33,7 +41,7 @@ export const PLANS = {
   pro: {
     name: 'Pro',
     price: 99.99,
-    productLimit: 50,
+    productLimit: 100,
     commissionPercentage: 0,
     stripePriceId: process.env.STRIPE_PRICE_PRO,
     onlinePayments: true,

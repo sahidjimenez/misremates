@@ -4,7 +4,7 @@ export type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'refunded'
 export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'refunded'
 export type StoreStatus = 'active' | 'paused' | 'suspended'
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing' | 'incomplete'
-export type PlanName = 'free' | 'basico' | 'intermedio' | 'pro' | 'corporativo'
+export type PlanName = 'free' | 'superbasico' | 'basico' | 'intermedio' | 'pro' | 'corporativo'
 
 export interface User {
   id: string
@@ -112,7 +112,7 @@ export interface Payment {
 export interface PlanLimits {
   canAddProduct: boolean
   reason: string | null
-  upgradeRequired: 'basico' | 'intermedio' | 'pro' | 'corporativo' | null
+  upgradeRequired: 'superbasico' | 'basico' | 'intermedio' | 'pro' | 'corporativo' | null
   currentProductCount: number
   productLimit: number | null
 }
